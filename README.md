@@ -6,6 +6,8 @@
 
 **A focused workspace for classic clothing creators.**
 
+**Website:** https://bordersz.github.io/clothwork/
+
 `Chrome extension` · `JavaScript` · `Manifest V3` · `Local-first`
 
 *Independent project. Not affiliated with Roblox Corporation.*
