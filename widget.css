@@ -1,0 +1,88 @@
+:host { all: initial; color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif }
+*, *::before, *::after { box-sizing: border-box }
+[hidden] { display: none !important }
+button, a { font: inherit }
+button { cursor: pointer }
+.cw-shell { position: fixed; right: 16px; bottom: 18px; z-index: 2147483646; color: #f6f6f7; font-family: inherit; font-size: 13px }
+.cw-toggle { width: 58px; height: 58px; position: absolute; right: 0; bottom: 0; display: grid; place-items: center; background: #0a0b0e; color: white; border: 1px solid #777b86; border-radius: 19px; box-shadow: 0 12px 32px #0009; padding: 6px; transition: transform .15s ease; }
+.cw-toggle:hover { transform: translateY(-3px); border-color: white }
+.cw-toggle img { width: 44px; height: 44px; object-fit: cover; border-radius: 12px }
+.cw-dot { position: absolute; top: 3px; right: 3px; width: 10px; height: 10px; border: 2px solid #111; border-radius: 99px; background: #737d90 }
+.cw-phase-running, .cw-phase-loading { background: #6febaf !important }
+.cw-phase-finished { background: #4bb9e5 !important }
+.cw-phase-interrupted { background: #ffcd79 !important }
+.cw-panel { position: absolute; right: 0; bottom: 70px; width: 356px; max-width: calc(100vw - 20px); max-height: min(705px, calc(100vh - 104px)); overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #444853 #141517; background: #111216; border: 1px solid #414349; border-radius: 20px; box-shadow: 0 22px 68px #000b; }
+.cw-header { padding: 17px 17px 13px; display: flex; justify-content: space-between; align-items: center }
+.cw-brand { display: flex; align-items: center; gap: 11px }
+.cw-brand img { width: 38px; height: 38px; border-radius: 9px; border: 1px solid #35363a }
+.cw-brand span { display: grid; gap: 2px }
+.cw-brand b { font-size: 16px; letter-spacing: -.25px; font-weight: 780 }
+.cw-brand small { color: #989ba7; font-size: 11px }
+.cw-icon-button { border: none; color: #a7a9ae; background: #24252a; border-radius: 9px; width: 28px; height: 28px; font-size: 22px; line-height: 1 }
+.cw-tabs { display: flex; padding: 0 15px; gap: 5px; border-bottom: 1px solid #292b30 }
+.cw-tab { border: 0; border-bottom: 2px solid transparent; padding: 10px 14px; color: #989da7; background: transparent; font-size: 12px; font-weight: 650 }
+.cw-tab.is-active { border-bottom-color: white; color: white }
+.cw-view { padding: 16px; min-height: 300px }
+.cw-statusline { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 18px }
+.cw-status { padding: 6px 9px; border-radius: 7px; background: #34363b; color: #e2e4e7; font-size: 11px; font-weight: 780 }
+.cw-status.cw-phase-running, .cw-status.cw-phase-loading { background: #214f3b !important; color: #a4f5c7 }
+.cw-status.cw-phase-finished { background: #21445b !important; color: #91deff }
+.cw-status.cw-phase-interrupted { background: #60451f !important; color: #ffe0a3 }
+.cw-faint { font-size: 10px; color: #757b85 }
+.cw-group { display: flex; justify-content: space-between; gap: 12px; align-items: center; color: #9da3ae; font-size: 12px; margin-bottom: 16px }
+.cw-group strong { color: white; text-align: right; font-size: 12px }
+.cw-current { padding: 13px; display: grid; gap: 7px; border: 1px solid #3d404a; border-radius: 11px; background: #202126 }
+.cw-current small { font-size: 10px; font-weight: 750; letter-spacing: 1px; color: #a1a4af }
+.cw-current strong { font-size: 14px; word-break: break-word }
+.cw-current span { font-size: 11px; color: #b2b4ba; line-height: 1.5 }
+.cw-progress-label { display: flex; justify-content: space-between; padding: 17px 1px 8px; font-size: 12px }
+.cw-progress-label span { color: #b4bbc6 }
+.cw-meter { width: 100%; height: 8px; overflow: hidden; border-radius: 99px; background: #343740 }
+.cw-meter div { height: 100%; width: 0; border-radius: 99px; background: #f1f2f5; transition: width .25s }
+.cw-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 14px 0 19px }
+.cw-stats div { background: #1e2025; border: 1px solid #33363b; border-radius: 9px; text-align: center; padding: 10px 4px }
+.cw-stats strong { font-size: 19px; display: block; font-variant-numeric: tabular-nums }
+.cw-stats small { display: block; margin-top: 2px; font-size: 10px; color: #a7aab2 }
+.cw-view h3 { margin: 14px 0 10px; font-size: 12px; font-weight: 730 }
+.cw-feed, .cw-result-items { display: grid; gap: 0; max-height: 230px; overflow-y: auto }
+.cw-row { display: flex; gap: 10px; justify-content: space-between; align-items: start; padding: 9px 2px; border-top: 1px solid #2b2d32 }
+.cw-row-detail { display: grid; gap: 5px; min-width: 0 }
+.cw-row strong { font-size: 11px; font-weight: 590; line-height: 1.35; overflow-wrap: anywhere }
+.cw-row small { color: #999ca5; font-size: 10px }
+.cw-row a, .cw-mutedlink { color: #c6d7ff; text-decoration: none; font-size: 11px; white-space: nowrap }
+.cw-row a:hover, .cw-mutedlink:hover { text-decoration: underline }
+.cw-empty { font-size: 12px; color: #9ca0aa; margin: 10px 0 }
+.cw-caption { color: #9da1ad; font-size: 11px; line-height: 1.55; margin: 10px 0 }
+.cw-result-summary, .cw-settingsbox { padding: 12px; background: #202126; border: 1px solid #3a3c44; border-radius: 10px; font-size: 12px; line-height: 1.6 }
+.cw-settingsbox p { color: #a8abb5; font-size: 11px; line-height: 1.6; margin: 7px 0 }
+.cw-settingsbox span { color: #96e5bd; font-size: 11px }
+.cw-mutedlink { display: inline-block; margin: 10px 2px }
+.cw-primary, .cw-secondary { text-align: center; display: block; width: 100%; padding: 12px; border: 1px solid #e7e7e7; border-radius: 10px; background: #fafafa; color: #111; font-size: 12px; font-weight: 780; text-decoration: none }
+.cw-primary:hover { background: #dcdde0 }
+.cw-secondary { background: #282a31; color: white; border-color: #43464f; margin-top: 10px }
+.cw-secondary:hover { background: #34363d }
+footer { padding: 0 16px 16px; display: grid; gap: 10px; text-align: center }
+footer span { font-size: 10px; color: #737782 }
+@media (max-width: 440px) { .cw-shell { right: 10px; bottom: 10px } .cw-panel { width: min(344px, calc(100vw - 20px)); max-height: calc(100vh - 95px) } }
+
+/* Companion appearance, consistent with the editor. */
+.cw-shell{font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif}
+.cw-toggle{background:#0c0d10;border-color:#535560;border-radius:16px;box-shadow:0 15px 44px #0009}
+.cw-panel{border-radius:18px;background:#101115;border-color:#393b43}
+.cw-header{border-bottom:1px solid #292b30;padding:20px}
+.cw-brand b{font-family:Impact,'Arial Black',system-ui,sans-serif;letter-spacing:-.4px;font-size:21px;text-transform:uppercase}
+.cw-brand-dot{color:#aaa4ff}.cw-tabs{padding-top:5px}
+.cw-shell[data-theme=light]{color:#16181f}
+.cw-shell[data-theme=light] .cw-toggle{background:#f8f8fa;border-color:#c9cbd2;box-shadow:0 12px 35px #0002}
+.cw-shell[data-theme=light] .cw-panel{background:#fff;color:#14151a;border-color:#d3d5dc;box-shadow:0 20px 60px #0002}
+.cw-shell[data-theme=light] .cw-header,.cw-shell[data-theme=light] .cw-tabs{border-color:#e2e4e8}
+.cw-shell[data-theme=light] .cw-brand b,.cw-shell[data-theme=light] .cw-group strong,.cw-shell[data-theme=light] .cw-current strong{color:#17181e}
+.cw-shell[data-theme=light] .cw-tab{color:#707781}.cw-shell[data-theme=light] .cw-tab.is-active{color:#1a1c22;border-color:#1a1c22}
+.cw-shell[data-theme=light] .cw-status{background:#e9eaf0;color:#363843}
+.cw-shell[data-theme=light] .cw-current,.cw-shell[data-theme=light] .cw-stats div,.cw-shell[data-theme=light] .cw-settingsbox,.cw-shell[data-theme=light] .cw-result-summary{background:#f6f7f9;border-color:#dde0e6;color:#2a2c35}
+.cw-shell[data-theme=light] .cw-row{border-color:#e1e3e9}.cw-shell[data-theme=light] .cw-row strong{color:#24252a}
+.cw-shell[data-theme=light] .cw-meter{background:#e4e5eb}.cw-shell[data-theme=light] .cw-meter div{background:#262932}
+.cw-shell[data-theme=light] .cw-secondary{background:#f0f1f5;color:#252832;border-color:#d2d4dc}
+.cw-shell[data-theme=light] .cw-primary{background:#20222b;color:#fff;border-color:#20222b}
+.cw-shell[data-theme=light] .cw-settingsbox p,.cw-shell[data-theme=light] .cw-caption,.cw-shell[data-theme=light] .cw-row small{color:#6f7480}
+.cw-shell[data-theme=light] .cw-icon-button{background:#ededf1;color:#25262d}
