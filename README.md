@@ -4,7 +4,7 @@
 
 # CLOTHWORK
 
-**A focused workspace for classic clothing creators.**
+**A focused workspace for 2d clothing creators. #bringbackclassicclothingcreation**
 
 **Website:** https://bordersz.github.io/clothwork/
 
