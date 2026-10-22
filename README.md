@@ -26,7 +26,7 @@
 
 Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants and T-shirts. It verifies a group's identity, loads clothing, previews bulk name and description changes, shows a compact companion inside the Creator Dashboard, and keeps local activity/results.
 
-**This repository contains the public read-only portfolio edition.** It does not request Roblox API keys or perform live edits.
+**Clothwork is a browser-based clothing workspace.** This edition previews planned changes and supports manual editing through Roblox's own interface.
 
 ## Features
 
@@ -53,7 +53,7 @@ No paid website, external service, or extension store listing is required.
 
 The public build stores relevant inventory and operation state locally in Chrome for resuming and reports; it has no analytics, trackers or developer-operated servers. **Never commit Roblox API keys or cookies.** Review the [privacy policy](docs/PRIVACY.md), [architecture](docs/ARCHITECTURE.md), and [security notes](SECURITY.md).
 
-Roblox's [third-party app policy](https://en.help.roblox.com/hc/en-us/articles/37924211313044-Creator-Third-Party-App-Policy) forbids requesting API keys from other users. The public version intentionally omits credential collection. A future multi-user product requires platform-approved authorization and independent testing.
+Roblox's [third-party app policy](https://en.help.roblox.com/hc/en-us/articles/37924211313044-Creator-Third-Party-App-Policy) forbids requesting API keys from other users. Clothwork does not request credentials. Changes are saved by the user in Roblox's own editing interface.
 
 ## Development
 
@@ -65,7 +65,7 @@ npm test
 
 ## Status
 
-Version **0.4.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is a portfolio project, not an official Roblox integration.
+Version **0.4.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
 
 ## Ownership
 
