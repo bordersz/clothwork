@@ -54,11 +54,12 @@
         </div>
         <div class="bigField">
           <label class="switchLine" for="editDescription"><input id="editDescription" type="checkbox" checked /><span><strong>Change all clothing descriptions</strong><small>Give every selected item the same description.</small></span></label>
-          <div id="descriptionArea"><label for="description">New description for every item</label><textarea id="description" rows="3" maxlength="1000" placeholder="Example: Made by my group">Made by {group}</textarea>
+          <div id="descriptionArea"><label for="description">New description for every item</label><textarea id="description" rows="9" maxlength="1000" spellcheck="false" placeholder="Use Enter for new lines and press Enter twice to separate sections. Example: Made by {group}">Made by {group}</textarea>
+            <p class="hint descriptionHelp">Press Enter for a new line or twice for a blank line. The preview keeps your spacing; the personal edition sends it to Roblox.</p>
             <div class="inputFoot"><span><button id="creditShortcut" class="textButton" type="button">Use "Made by [group name]"</button> · <span class="hint">The group's real name fills in automatically.</span></span><span id="descriptionCount">0 / 1000</span></div>
           </div>
         </div>
-        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">EXAMPLE OF YOUR CHANGES</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><strong id="sampleDesc">Made by your group</strong></div></div>
+        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">EXAMPLE OF YOUR CHANGES</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><strong id="sampleDesc" class="descriptionPreview">Made by your group</strong></div></div>
         <details class="advanced" id="advancedRules"><summary>More options <span class="summaryHint">Individual names, templates, archiving</span></summary>
           <div class="advancedBody"><label for="nameMode">How to choose names (advanced)</label><select id="nameMode"><option value="same">Same name for every selected item</option><option value="keep">Don't change names</option><option value="template">Advanced name pattern</option><option value="custom">Use each item's custom name from the list</option></select>
             <p class="hint">Patterns can use <code>{group}</code>, <code>{oldName}</code>, <code>{id}</code>, <code>{type}</code>, <code>{index}</code>. Only choose this if you want different names.</p>
