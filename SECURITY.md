@@ -1,12 +1,9 @@
-# Security notes
+# Security
 
-Do not create issues containing API keys, passwords, `.ROBLOSECURITY` cookies, group access secrets, private inventory exports, or screenshots showing credentials.
+Clothwork does not require Roblox passwords, security cookies, developer API keys, or OAuth credentials. It operates locally and provides links to Roblox's own configuration interface for manual saving.
 
-- The extension uses HTTPS endpoints associated with Roblox.
-- No externally hosted executable scripts, analytics or tracking SDKs.
-- Asset values are rendered as text nodes to reduce injection risk.
-- Live changes in the personal edition require verified group ownership and explicit preview/confirmation, and use per-item checks and request backoff.
-- The public edition is intentionally preview-only to avoid collecting API keys from other Roblox creators.
-- There is no guarantee against abuse, policy changes, or malformed external API responses; test on a throwaway item before live edits.
+Report potential vulnerabilities privately rather than posting credentials or private data in public issues.
 
-If you inadvertently commit a secret to Git, **revoke/rotate the key immediately**. Deleting a file from the current tree does not necessarily remove the secret from Git history.
+The extension uses no third-party analytics and does not load remotely hosted executable scripts. Validate changes in Roblox before marking items complete.
+
+Avoid sharing exports containing item data you do not intend to publish.
