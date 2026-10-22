@@ -1,6 +1,34 @@
 /** @file Pure planning and validation helpers. No network calls or credentials. */
 export const TYPES = ['Shirt', 'Pants', 'TShirt'];
 export const DAY = 86_400_000;
+/** Suggested descriptive terms. Only user-selected terms from this set are appended automatically. */
+export const CLOTHING_TAGS=Object.freeze([
+  'black','grey','white','pink','red','blue','cute','casual','aesthetic',
+  'vintage','retro','y2k','emo','goth','gothic','kawaii','alt','alternative',
+  'fairy','cottagecore','cyber','cybergoth','pastel','neon','floral','flowers',
+  'mushroom','cat','space','tie dye','skull','graphic','textured','clothing',
+  'shirt','pants','outfit','r6'
+]);
+const clothingTagSet=new Set(CLOTHING_TAGS);
+export function parseClothingTags(raw){
+  const values=String(raw??'').replace(/\r\n?/g,'\n').split(/[,\n]+/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  const invalid=[...new Set(values.filter(x=>!clothingTagSet.has(x)))];
+  return {tags:[...new Set(values.filter(x=>clothingTagSet.has(x)))],invalid};
+}
+/** Retain all author-entered line breaks; never pad with invisible text to force a fold. */
+export function formatDescription(raw){
+  return String(raw??'').replace(/\r\n?/g,'\n');
+}
+export function appendClothingTags(description,tags){
+  if(!tags.length)return formatDescription(description);
+  const src=formatDescription(description);
+  const list=tags.join(', ');
+  // Respect a final standalone "tags" line already written by the author.
+  if(/(?:^|\n)[ \t]*tags[ \t]*$/.test(src))return src+'\n'+list;
+  if(!src)return 'tags\n'+list;
+  return src+(src.endsWith('\n\n')?'':src.endsWith('\n')?'\n':'\n\n')+'tags\n'+list;
+}
+
 
 export function isId(value) { return /^\d+$/.test(String(value ?? '').trim()) && BigInt(String(value).trim()) > 0n; }
 export function normalizeType(t) {
@@ -35,12 +63,19 @@ export function plan(item, options, group, index=0) {
   const newName=options.nameMode==='same' ? String(options.nameText||'').trim()
     : options.nameMode==='template' ? expand(options.nameText,item,group,index).trim()
     : options.nameMode==='custom' ? String(item.customName||'').trim() : null;
-  const newDescription=options.editDescription ? expand(options.description,item,group,index).trim() : null;
+  const selectedTags=options.editDescription&&options.includeTags?parseClothingTags(options.tagText):{tags:[],invalid:[]};
+  const newDescription=options.editDescription
+    ? appendClothingTags(formatDescription(expand(options.description,item,group,index)),selectedTags.tags)
+    : null;
   const changeName=newName!==null && newName!==item.name;
   const changeDescription=newDescription!==null && newDescription!==item.description;
   const issues=[];
   if(options.nameMode!=='keep' && !newName) issues.push('Name is blank');
   if(newName!==null && newName.length>50) issues.push('Name exceeds 50 characters');
+  if(options.editDescription&&options.includeTags){
+    if(selectedTags.invalid.length)issues.push('Remove unrecognized tags: '+selectedTags.invalid.join(', ').slice(0,180));
+    if(!selectedTags.tags.length)issues.push('Select at least one clothing tag');
+  }
   if(newDescription!==null && newDescription.length>1000) issues.push('Description exceeds 1000 characters');
   return {newName,newDescription,changeName,changeDescription,issues};
 }

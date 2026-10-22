@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Clothwork — Clothing Manager",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Prepare and review classic clothing metadata and apply changes manually through Roblox Creator Hub.",
   "action": {
     "default_title": "Open Clothwork editor"

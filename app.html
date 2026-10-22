@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.6</span></div>
+  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.6.1</span></div>
   <div class="topright"><span class="muted privacy-label">LOCAL FIRST · NO ANALYTICS</span><button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch color theme">Light mode</button><a href="https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics" target="_blank" rel="noopener">Creator Dashboard ↗</a></div>
 </header>
 <main>
@@ -54,11 +54,19 @@
         </div>
         <div class="bigField">
           <label class="switchLine" for="editDescription"><input id="editDescription" type="checkbox" checked /><span><strong>Change all clothing descriptions</strong><small>Give every selected item the same description.</small></span></label>
-          <div id="descriptionArea"><label for="description">New description for every item</label><textarea id="description" rows="3" maxlength="1000" placeholder="Example: Made by my group">Made by {group}</textarea>
+          <div id="descriptionArea"><label for="description">New description for every item</label><textarea id="description" rows="8" maxlength="1000" placeholder="Example: Made by my group">Made by {group}</textarea>
             <div class="inputFoot"><span><button id="creditShortcut" class="textButton" type="button">Use "Made by [group name]"</button> · <span class="hint">The group's real name fills in automatically.</span></span><span id="descriptionCount">0 / 1000</span></div>
           </div>
         </div>
-        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">EXAMPLE OF YOUR CHANGES</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><strong id="sampleDesc">Made by your group</strong></div></div>
+        <div class="bigField" id="tagsArea">
+          <label class="switchLine" for="includeTags"><input id="includeTags" type="checkbox" /><span><strong>Add clothing tags</strong><small>Optional. Only the selected terms below are added, after your description.</small></span></label>
+          <div id="tagOptions" hidden>
+            <p class="hint">Select relevant descriptions only. No preset words are included automatically.</p>
+            <div class="tagChoices" id="tagChoices"></div>
+            <div class="inputFoot"><span>Tags are separated from your description by an empty line.</span><span id="tagCount">0 selected</span></div>
+          </div>
+        </div>
+        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">EXAMPLE OF YOUR CHANGES</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><div class="catalogDescription"><div id="sampleDesc" class="descriptionBody">Made by your group</div><button id="sampleReadMore" type="button" class="readMoreButton" hidden>Read more</button></div></div></div>
         <details class="advanced" id="advancedRules"><summary>More options <span class="summaryHint">Individual names, templates, archiving</span></summary>
           <div class="advancedBody"><label for="nameMode">How to choose names (advanced)</label><select id="nameMode"><option value="same">Same name for every selected item</option><option value="keep">Don't change names</option><option value="template">Advanced name pattern</option><option value="custom">Use each item's custom name from the list</option></select>
             <p class="hint">Patterns can use <code>{group}</code>, <code>{oldName}</code>, <code>{id}</code>, <code>{type}</code>, <code>{index}</code>. Only choose this if you want different names.</p>
@@ -95,7 +103,7 @@
     <div class="tablefoot"><span id="visibleCount" class="hint">0 items</span><span class="hint">Each live edit checks the group's ownership again.</span></div>
   </section>
   <section class="panel logPanel"><div class="panelhead"><div><h2>Problems and activity</h2><p class="hint">If something fails, it gets recorded here. Other items can keep going.</p></div><div class="inline"><button id="clearHistory" class="subtle" type="button">Clear local data</button><button id="exportLog" class="subtle" type="button">Download results</button></div></div><div id="logs" class="logs"><div class="hint">No activity yet.</div></div></section>
-  <footer>Clothwork / v0.6 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
+  <footer>Clothwork / v0.6.1 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
 </main>
 <script type="module" src="app.js"></script>
 </body>

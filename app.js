@@ -13,13 +13,13 @@ async function restoreTheme(){
   catch{document.documentElement.dataset.theme='dark';}
 }
 
-import {TYPES,normalizeItem,dedupeItems,plan,archiveEligibility,ownerOf,parseCsv,toCsv,isId} from './core.js';
+import {TYPES,normalizeItem,dedupeItems,plan,archiveEligibility,ownerOf,parseCsv,toCsv,isId,CLOTHING_TAGS,parseClothingTags} from './core.js';
 
 const $=id=>document.getElementById(id);
 const SETTINGS_KEY='clothwork_v01_state';
 const LIVE_KEY='clothwork_live_v03';
 const CONTROL_KEY='clothwork_control_v03';
-const DEFAULTS={nameMode:'same',nameText:'',editDescription:true,description:'Made by {group}',archiveReview:false,delay:5000};
+const DEFAULTS={nameMode:'same',nameText:'',editDescription:true,description:'Made by {group}',includeTags:false,tagText:'',archiveReview:false,delay:5000};
 let state={groupId:'',groupName:'',verified:false,items:[],logs:[],options:{...DEFAULTS}};
 let running=false,stop=false,dirtySave=null,loading=false,previewSignature=null;
 let liveTimer=null;
@@ -85,6 +85,7 @@ async function restore(){
   $('groupId').value=state.groupId;
   $('nameMode').value=state.options.nameMode;$('renameAll').checked=state.options.nameMode!=='keep';$('nameText').value=state.options.nameText;
   $('editDescription').checked=state.options.editDescription;$('description').value=state.options.description;
+  $('includeTags').checked=!!state.options.includeTags;renderTagChoices();
   $('archiveReview').checked=state.options.archiveReview;$('delay').value=String(state.options.delay);
   updateRuleInputs();render();publishLiveSoon();
 }
@@ -187,6 +188,19 @@ function render(){
   refreshExample();
   refreshPreviewAccess();
 }
+function selectedTagText(){
+  return [...document.querySelectorAll('.clothingTag:checked')].map(x=>x.value).join(', ');
+}
+function renderTagChoices(){
+  const root=$('tagChoices');root.replaceChildren();
+  const selected=new Set(parseClothingTags(state.options.tagText).tags);
+  for(const tag of CLOTHING_TAGS){
+    const label=mk('label','tagChoice'),input=document.createElement('input');
+    input.type='checkbox';input.className='clothingTag';input.value=tag;input.checked=selected.has(tag);
+    input.addEventListener('change',updateOptions);
+    label.append(input,document.createTextNode(tag));root.append(label);
+  }
+}
 function updateRuleInputs(){
   const mode=$('nameMode').value;
   $('renameAll').checked=mode!=='keep';
@@ -195,12 +209,15 @@ function updateRuleInputs(){
   $('nameText').placeholder=mode==='template'?'Example: {oldName} | {group}':'Example: vintage black jeans';
   $('descriptionArea').hidden=!$('editDescription').checked;
   $('description').disabled=!$('editDescription').checked;
+  $('includeTags').disabled=!$('editDescription').checked;
+  $('tagOptions').hidden=!$('editDescription').checked||!$('includeTags').checked;
   $('nameCount').textContent=$('nameText').value.length+' / 50';
   $('descriptionCount').textContent=$('description').value.length+' / 1000';
+  $('tagCount').textContent=parseClothingTags(selectedTagText()).tags.length+' selected';
 }
 function updateOptions(){
   state.options={nameMode:$('nameMode').value,nameText:$('nameText').value,editDescription:$('editDescription').checked,
-    description:$('description').value,archiveReview:$('archiveReview').checked,delay:Number($('delay').value)};
+    description:$('description').value,includeTags:$('includeTags').checked,tagText:selectedTagText(),archiveReview:$('archiveReview').checked,delay:Number($('delay').value)};
   invalidatePreview();updateRuleInputs();saveSoon();render();
 }
 function invalidatePreview(){
@@ -229,6 +246,13 @@ function refreshExample(){
   $('sampleOld').textContent=selected.name||'(untitled clothing)';
   $('sampleNew').textContent=p.newName===null?'Name stays the same':p.newName||'Type a new name above';
   $('sampleDesc').textContent=p.newDescription===null?'Description stays the same':p.newDescription||'(empty description)';
+  $('sampleDesc').classList.remove('expanded');
+  requestAnimationFrame(()=>{
+    const body=$('sampleDesc'),button=$('sampleReadMore');
+    const overflowing=body.scrollHeight>body.clientHeight+3;
+    button.hidden=!overflowing;
+    button.textContent='Read more';
+  });
 }
 function refreshPreviewAccess(){
   const ready=!!previewSignature && previewSignature===makeSignature() && state.verified;
@@ -374,6 +398,11 @@ function wire(){
   $('nameMode').addEventListener('change',updateOptions);
   $('creditShortcut').addEventListener('click',()=>{$('description').value='Made by {group}';$('editDescription').checked=true;updateOptions();});
   $('preview').addEventListener('click',previewBatch);
+  $('includeTags').addEventListener('change',updateOptions);
+  $('sampleReadMore').addEventListener('click',()=>{
+    const expanded=$('sampleDesc').classList.toggle('expanded');
+    $('sampleReadMore').textContent=expanded?'Read less':'Read more';
+  });
   $('testOne').addEventListener('change',refreshPreviewAccess);
   $('groupId').addEventListener('input',()=>{
     if($('groupId').value.trim()!==state.groupId){invalidatePreview();state.verified=false;$('groupVerified').textContent='Unverified group ID';$('groupVerified').className='verification';render();}

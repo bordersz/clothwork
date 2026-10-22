@@ -71,3 +71,16 @@ html[data-theme=light] .textButton{color:#534e98}
 html[data-theme=light] .miniDetails summary,html[data-theme=light] .advanced summary{color:#615880}
 html[data-theme=light] .privacyNote,html[data-theme=light] .verification{color:#515966}
 html[data-theme=light] .statnum{color:#16171e}html[data-theme=light] .mini{color:#5f6978}
+/* Catalog-style description preview: preserve real newlines, never insert filler. */
+#description{min-height:176px;white-space:pre-wrap;line-height:1.6}
+.catalogDescription{min-width:0;max-width:100%}
+.descriptionBody{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.55;font-weight:600;max-height:6.2em;overflow:hidden}
+.descriptionBody.expanded{max-height:none;overflow:visible}
+.readMoreButton{border:0;background:none;padding:5px 0;color:#c2baff;font-size:12px;text-decoration:underline;font-weight:600}
+.readMoreButton:hover:not(:disabled){background:none;color:#e6e1ff}
+.readMoreButton[hidden]{display:none}
+.tagChoices{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0}
+.tagChoice{display:inline-flex!important;align-items:center;gap:7px;padding:8px 10px;border:1px solid #444855;border-radius:9px;font-size:12px!important;margin:0!important;font-weight:500!important;background:var(--surface2,#181b20);cursor:pointer}
+.tagChoice:has(input:checked){border-color:#aaa4ff;background:#383449}
+.tagChoice input{accent-color:#aaa4ff}
+html[data-theme=light] .tagChoice:has(input:checked){background:#e9e6fc}
