@@ -37,10 +37,11 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 - Filter shirts, pants, T-shirts; select items individually or in bulk.
 - Inspect activity and results in a floating in-page panel.
 - Switch between refined **dark and light themes**.
-- Export inventory and reports; clear locally saved data.
+- Optional CSV/JSON exports (no automatic downloads); clear locally saved data.
 - Review age-eligible items with clear links and instructions for **manual Marketplace archiving** in Roblox.
 - Automatically show the dashboard companion on first visit, with a collapsible floating panel.
-- A built-in first-run checklist and optional light/dark interface.
+- Collapsible help and optional light/dark interface.
+- 100-row inventory pagination and a single **Start editing** action.
 
 ## Install and use — free
 
@@ -51,7 +52,7 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 3. Turn **Developer mode** on.
 4. Click **Load unpacked**, then choose the folder that contains `manifest.json`.
 5. Open the [Creator Dashboard](https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics&filterIndex=0). Click the small Clothwork button, then **Open editor**.
-6. Enter a group ID and load shirts and pants, or add one clothing item by URL or asset ID. Choose a naming mode and preview your changes.
+6. Enter a group ID and load shirts and pants, or add one clothing item by URL or asset ID. Choose a naming mode and select **Start editing**.
 7. Use Copy name / Copy description for each item, save through Roblox Creator Hub, and mark the result as saved.
 
 No paid website, OAuth registration, API key, or Chrome Web Store listing is required for the manual editing workflow. Clothwork prepares edits; each change must be saved through Roblox's own editor.
@@ -78,7 +79,7 @@ npm test
 
 ## Status
 
-Version **0.7.2** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
+Version **0.7.3** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
 
 ## Ownership
 
