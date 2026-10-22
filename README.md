@@ -51,9 +51,11 @@ No paid website, external service, or extension store listing is required.
 
 ## Safety and privacy
 
-The public build stores relevant inventory and operation state locally in Chrome for resuming and reports; it has no analytics, trackers or developer-operated servers. **Never commit Roblox API keys or cookies.** Review the [privacy policy](docs/PRIVACY.md), [architecture](docs/ARCHITECTURE.md), and [security notes](SECURITY.md).
+The public build stores relevant inventory and operation state locally in Chrome for resuming and reports; it has no analytics, trackers or developer-operated servers. **Never publish passwords, cookies, or other credentials.** Review the [privacy policy](docs/PRIVACY.md), [architecture](docs/ARCHITECTURE.md), and [security notes](SECURITY.md).
 
-Roblox's [third-party app policy](https://en.help.roblox.com/hc/en-us/articles/37924211313044-Creator-Third-Party-App-Policy) forbids requesting API keys from other users. Clothwork does not request credentials. Changes are saved by the user in Roblox's own editing interface.
+Clothwork does not require third-party account access. Clothwork does not request credentials. Changes are saved by the user in Roblox's own editing interface.
+
+For guided manual editing, follow the [user guide](docs/USER_GUIDE.md).
 
 ## Development
 
@@ -65,7 +67,7 @@ npm test
 
 ## Status
 
-Version **0.4.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
+Version **0.6.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
 
 ## Ownership
 
