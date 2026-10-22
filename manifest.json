@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Clothwork — Clothing Manager",
-  "version": "0.7.0",
-  "description": "A friendly classic clothing workspace: select, preview, copy, and track edits with official Roblox Creator Hub links.",
+  "version": "0.7.2",
+  "description": "Review classic clothing and prepare metadata changes with guided manual saves through Roblox Creator Hub.",
   "action": {
     "default_title": "Open Clothwork editor"
   },
