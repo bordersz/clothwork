@@ -56,10 +56,10 @@
       </section>
       <section id="cw-settings" class="cw-view" hidden>
         <h3>Public edition / privacy</h3>
-        <div class="cw-settingsbox"><b>Read-only portfolio preview</b><p>This edition has no API key field and cannot update clothing. No credentials are collected.</p>
+        <div class="cw-settingsbox"><b>Guided clothing workspace</b><p>Prepare your changes in Clothwork and save through Roblox Creator Hub.</p>
         <span id="cw-key-info">No key saved by Clothwork</span></div>
-        <a id="cw-api-link" class="cw-secondary cw-link" href="${API_URL}" target="_blank" rel="noopener noreferrer">Manage Roblox API keys ↗</a>
-        <a class="cw-mutedlink" href="https://create.roblox.com/docs/cloud/auth/api-keys" target="_blank" rel="noopener noreferrer">API key setup instructions ↗</a>
+        <a id="cw-api-link" class="cw-secondary cw-link" href="${API_URL}" target="_blank" rel="noopener noreferrer">Open Roblox Creator Hub ↗</a>
+        <a class="cw-mutedlink" href="https://create.roblox.com/docs/cloud/auth/api-keys" target="_blank" rel="noopener noreferrer">Clothwork guide ↗</a>
         <h3>Appearance</h3><button id="cw-theme" class="cw-secondary">Switch to light mode</button>
         <h3>Your privacy</h3><p class="cw-caption">No analytics, accounts, or tracking. Clothing and activity are retained locally for resume and reports until you clear them in the editor. API keys are never written to that history.</p>
         <h3>About this sidebar</h3><p class="cw-caption">Clothwork shows progress from the local editor. It does not click or type inside Roblox's pages. Group ownership is checked by the editor before each live change.</p>
