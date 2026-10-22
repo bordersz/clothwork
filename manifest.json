@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Clothwork \u2014 Clothing Manager",
-  "version": "0.4.1",
-  "description": "Read-only portfolio preview: locally review group classic clothing and planned changes. No API keys collected.",
+  "name": "Clothwork — Clothing Manager",
+  "version": "0.5.0",
+  "description": "Roblox classic clothing editor with OAuth 2.0 sign-in; independent.",
   "action": {
     "default_title": "Open Clothwork editor"
   },
@@ -11,7 +11,8 @@
   },
   "permissions": [
     "storage",
-    "tabs"
+    "tabs",
+    "identity"
   ],
   "host_permissions": [
     "https://itemconfiguration.roblox.com/*",
@@ -44,5 +45,6 @@
     "32": "icon32.png",
     "48": "icon48.png",
     "128": "icon128.png"
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA"
 }
