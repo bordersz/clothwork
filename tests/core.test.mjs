@@ -25,3 +25,25 @@ test('CSV supports quoted comma and newline',()=>{
  const items=[normalizeItem({assetId:123,type:'Shirt',name:'hello, world',description:'line\nline'})];
  const parsed=parseCsv(toCsv(items));assert.equal(parsed[0].name,'hello, world');assert.equal(parsed[0].description,'line\nline');
 });
+test('keeps description line breaks, blank lines and author spacing',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Shirt',name:'item'});
+ const description='More clothes from {group}\n\ntags\ngoth grunge vintage\n\nThanks!';
+ const edited=plan(item,{nameMode:'keep',editDescription:true,description},'TestGroup');
+ assert.equal(edited.newDescription,'More clothes from TestGroup\n\ntags\ngoth grunge vintage\n\nThanks!');
+ assert.equal(edited.changeDescription,true);
+});
+test('keeps intentional leading and trailing empty lines',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Pants'});
+ const edited=plan(item,{nameMode:'keep',editDescription:true,description:'\nFirst line\n\n'},'TestGroup');
+ assert.equal(edited.newDescription,'\nFirst line\n\n');
+});
+test('converts pasted CRLF and CR line endings to LF only',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Pants'});
+ const edited=plan(item,{nameMode:'keep',editDescription:true,description:'A\r\n\r\nB\rC'},'TestGroup');
+ assert.equal(edited.newDescription,'A\n\nB\nC');
+});
+test('rejects expanded descriptions longer than 1000 characters',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Pants'});
+ const edited=plan(item,{nameMode:'keep',editDescription:true,description:'a'.repeat(999)+'\n\n'},'TestGroup');
+ assert.ok(edited.issues.some(issue=>issue.includes('1000')));
+});

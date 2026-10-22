@@ -35,7 +35,8 @@ export function plan(item, options, group, index=0) {
   const newName=options.nameMode==='same' ? String(options.nameText||'').trim()
     : options.nameMode==='template' ? expand(options.nameText,item,group,index).trim()
     : options.nameMode==='custom' ? String(item.customName||'').trim() : null;
-  const newDescription=options.editDescription ? expand(options.description,item,group,index).trim() : null;
+  // Keep intentional paragraph spacing and normalize pasted line endings.
+  const newDescription=options.editDescription ? expand(options.description,item,group,index).replace(/\r\n?/g,'\n') : null;
   const changeName=newName!==null && newName!==item.name;
   const changeDescription=newDescription!==null && newDescription!==item.description;
   const issues=[];

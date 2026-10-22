@@ -32,11 +32,16 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 
 - Confirm the target group ID and limit operations to the intended creator.
 - Preview batch names/descriptions, including `{group}` placeholders.
+- Write descriptions with paragraphs and blank lines; the editor and preview preserve your spacing.
 - Filter shirts, pants, T-shirts; select items individually or in bulk.
 - Inspect activity and results in a floating in-page panel.
 - Switch between refined **dark and light themes**.
 - Export inventory and reports; clear locally saved data.
 - Prepare an archive review checklist, with age estimates. **Actual Marketplace archiving remains manual.**
+
+## Description formatting
+
+Type or paste text in **New description for every item** and press Enter to make new lines (Enter twice for an empty line). The preview retains blank lines, and the personal edition submits line breaks as written. Roblox controls how descriptions appear on its own site, so test one asset before a batch update.
 
 ## Installation — free
 
@@ -65,7 +70,7 @@ npm test
 
 ## Status
 
-Version **0.4.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is a portfolio project, not an official Roblox integration.
+Version **0.4.1** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is a portfolio project, not an official Roblox integration.
 
 ## Ownership
 
