@@ -10,15 +10,15 @@ Clothwork is a local-first Chrome extension. There are no third-party analytics,
 - UI theme preference (dark/light) is saved locally.
 
 ## Network usage
-- Requests go to Roblox-owned HTTPS domains when you verify a group, load inventory, or (in the personal edition) edit metadata.
+- Requests go to Roblox-owned HTTPS domains when you verify a group, load inventory, or review metadata.
 - The extension does not contact an external Clothwork server and does not transfer activity to the project's author.
 - The extension does not require `.ROBLOSECURITY` cookies to be pasted into it. The Roblox browser session may be used by Roblox's inventory endpoint.
 
 ## API credentials
-- **Public edition:** no API key input or edit API calls exist; this edition is read-only.
+- No credentials are requested; metadata edits are completed in Roblox's interface.
 
 ## Third-party sharing
-Clothwork does not sell or send data to third parties. Public releases that obtain permissions from other Roblox users would require an appropriate authorization design and independent policy review. This portfolio release does not collect other creators' API keys.
+Clothwork does not sell or send data to third parties. This extension does not request account permissions.
 
 ## Limitations
-No software can guarantee immunity from browser malware, compromised devices, or Roblox-side API changes. Review installed extensions and your Roblox API key permissions regularly.
+No software can guarantee immunity from browser malware, compromised devices, or Roblox-side API changes. Review installed extensions regularly.
