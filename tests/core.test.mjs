@@ -48,3 +48,23 @@ test('prevents exceeding Roblox description character limit after tags',()=>{
  const p=plan(item,{nameMode:'keep',editDescription:true,description:'a'.repeat(990),includeTags:true,tagText:'black, grey'},'Example');
  assert.ok(p.issues.some(x=>x.includes('1000')));
 });
+
+test('individual blank name preserves each item name',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Shirt',name:'original'});
+ const p=plan(item,{nameMode:'custom',editDescription:false},'Group');
+ assert.equal(p.newName,null);
+ assert.equal(p.changeName,false);
+ assert.deepEqual(p.issues,[]);
+});
+test('individual entered name is planned for that item only',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Shirt',name:'original',customName:'new'});
+ item.customName='new';
+ const p=plan(item,{nameMode:'custom',editDescription:false},'Group');
+ assert.equal(p.newName,'new');
+ assert.equal(p.changeName,true);
+});
+test('the optional tag list stays opt-in',()=>{
+ const item=normalizeItem({assetId:123,assetType:'Shirt'});
+ const a=plan(item,{nameMode:'keep',editDescription:true,description:'A\n\nB',includeTags:false,tagText:'black'},'Group');
+ assert.equal(a.newDescription,'A\n\nB');
+});
