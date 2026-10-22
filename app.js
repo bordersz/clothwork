@@ -77,7 +77,7 @@ async function restore(){
     state.groupId=String(saved.groupId||'');state.groupName=String(saved.groupName||'');
     state.items=Array.isArray(saved.items)?saved.items:[];state.logs=Array.isArray(saved.logs)?saved.logs:[];
     state.options={...DEFAULTS,...saved.options};
-    // v0.1 default was 'keep'; the easy editor starts with 'same' for blank legacy defaults.
+    // Preserve the user's chosen naming mode.
     // Keep the existing naming preference without silently enabling bulk renaming.
     // Safety: every new tab must verify group again, independent of saved settings.
     state.verified=false;
@@ -164,7 +164,7 @@ function render(){
         const note=mk('div','mini','Eligible by age · find ⋯ in Roblox');
         actions.append(document.createElement('div'),archiveLink,note);
       }
-      if(i.archive==='manual_review'||archiveEligibility(i).eligible){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
+      if(i.archive!=='manual_done'&&(i.archive==='manual_review'||archiveEligibility(i).eligible)){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
       tr.append(status);
       const actions=mk('td');
       const open=link(`https://create.roblox.com/dashboard/creations/catalog/${encodeURIComponent(i.id)}/configure`,'Open in Roblox ↗');
