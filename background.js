@@ -1,4 +1,4 @@
-// One editor page; the floating Creator Dashboard companion is read-only.
+// One editor page; the floating Creator Dashboard companion displays local progress.
 async function openEditor() {
   const url = chrome.runtime.getURL('app.html');
   const matches = await chrome.tabs.query({ url });
