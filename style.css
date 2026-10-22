@@ -76,3 +76,9 @@ html[data-theme=light] .statnum{color:#16171e}html[data-theme=light] .mini{color
 #description{min-height:180px;line-height:1.6;white-space:pre-wrap;tab-size:4}
 .descriptionHelp{margin:8px 0 0;font-size:11px}
 .sampleLine .descriptionPreview{white-space:pre-wrap;overflow-wrap:anywhere;display:block;max-height:340px;overflow-y:auto;font-weight:500;line-height:1.6;tab-size:4}
+
+.oauthCard{border:1px solid #343842;padding:16px;border-radius:12px;margin:14px 0}
+.oauthCard .inline{display:flex;gap:8px;align-items:center;margin:7px 0 12px}
+.oauthCard .inline input{min-width:0;flex:1}
+.oauthCard label{display:block;margin-top:11px}
+.oauthActions{flex-wrap:wrap}
