@@ -144,3 +144,7 @@ html[data-theme=light] .hero{background:linear-gradient(112deg,#f6fafb,#e3edf2)}
 html[data-theme=light] .hero-brand{color:#38515d}
 @media(max-width:1020px){.quickstart-grid{grid-template-columns:repeat(2,minmax(0,1fr)}.hero-brand{display:none}}
 @media(max-width:570px){.quickstart-grid{grid-template-columns:1fr}.quickstart-hint{margin-left:0}}
+
+.tablefoot .inline { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+#pageInfo { min-width:74px; text-align:center; white-space:nowrap; }
+.tablefoot button:disabled { opacity:.4; cursor:not-allowed; }
