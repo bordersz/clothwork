@@ -14,6 +14,7 @@ async function restoreTheme(){
 }
 
 import {TYPES,normalizeItem,dedupeItems,plan,archiveEligibility,ownerOf,parseCsv,toCsv,isId} from './core.js';
+import {getClientId,setClientId,redirectUri,signIn,signOut,getSessionInfo,accessToken} from './oauth.js';
 
 const $=id=>document.getElementById(id);
 const SETTINGS_KEY='clothwork_v01_state';
@@ -342,13 +343,113 @@ function archiveAfter(item,archiveReview){
   const e=archiveEligibility(item);
   log(e.eligible?'REVIEW':'SKIP',e.eligible?'Eligible by age for manual archive review':`Cannot confirm archive eligibility: ${e.reason}`,item.id);
 }
-async function startBatch(){notice('This public preview is read-only. It does not accept API keys or modify Roblox assets.','danger');}
+async function cloud(url,options={}){
+  const makeOpts=async (refresh=false)=>({...options,headers:{...options.headers,Authorization:'Bearer '+await accessToken(refresh)},credentials:'omit'});
+  try{return await fetchJson(url,await makeOpts());}
+  catch(e){if(e.httpStatus===401)return fetchJson(url,await makeOpts(true));throw e;}
+}
+async function runOne(item,index,options){
+  const p=plan(item,options,state.groupName,index);item.lastRun=new Date().toISOString();
+  if(p.issues.length){item.status='skipped';item.detail=p.issues.join('; ');log('SKIP',item.detail,item.id);return;}
+  let actual;
+  try{actual=await cloud('https://apis.roblox.com/assets/v1/assets/'+item.id);}
+  catch(e){item.status='failed';item.detail='Could not verify asset via Open Cloud: '+humanError(e);log('ERROR',item.detail,item.id);return;}
+  const owner=ownerOf(actual);
+  if(owner.groupId!==state.groupId){item.status='skipped';item.detail=owner.groupId?'Owner mismatch: group #'+owner.groupId:'No verified group owner in API response';log('SKIP',item.detail,item.id);return;}
+  const advertised=String(actual.assetType||'').toLowerCase(),expected=item.type.toLowerCase();
+  if(advertised&&(/shirt|pants|tshirt/.test(advertised))&&!advertised.replace(/[^a-z]/g,'').includes(expected)){
+    item.status='skipped';item.detail='API type did not match selected clothing type';log('SKIP',item.detail,item.id);return;
+  }
+  const currentName=String(actual.displayName??item.name),currentDesc=String(actual.description??item.description);
+  item.before={name:currentName,description:currentDesc};
+  const newName=p.newName,newDesc=p.newDescription;
+  const mask=[],body={assetId:item.id};
+  if(newName!==null&&newName!==currentName){mask.push('displayName');body.displayName=newName;}
+  if(newDesc!==null&&newDesc!==currentDesc){mask.push('description');body.description=newDesc;}
+  if(!mask.length){item.status='already';item.detail='Requested metadata already matches';item.after=item.before;log('OK',item.detail,item.id);archiveAfter(item,options.archiveReview);return;}
+  const form=new FormData();form.append('request',JSON.stringify(body));
+  const url='https://apis.roblox.com/assets/v1/assets/'+item.id+'?updateMask='+encodeURIComponent(mask.join(','));
+  try{
+    const result=await cloud(url,{method:'PATCH',body:form}),opPath=String(result.path||'');
+    if(opPath.startsWith('operations/')){
+      let complete=false;
+      for(let n=0;n<6;n++){await sleep(Math.min(5000,1000*(n+1)));const op=await cloud('https://apis.roblox.com/assets/v1/'+opPath);
+        if(op.done){if(op.error)throw Error(op.error.message||'Roblox asset operation failed');complete=true;break;}
+      }
+      if(!complete)throw Error('Update operation still pending; inspect manually before retry');
+    }
+    await sleep(600);
+    const check=await cloud('https://apis.roblox.com/assets/v1/assets/'+item.id);
+    if((mask.includes('displayName')&&check.displayName!==newName)||(mask.includes('description')&&check.description!==newDesc))throw Error('Update returned but was not confirmed by follow-up GET');
+    item.status='edited';item.name=String(check.displayName??item.name);item.description=String(check.description??item.description);item.after={name:item.name,description:item.description};item.detail='Updated and verified';log('OK','Updated: '+mask.join(', '),item.id);
+    archiveAfter(item,options.archiveReview);
+  }catch(e){
+    try{const check=await cloud('https://apis.roblox.com/assets/v1/assets/'+item.id);
+      if((!mask.includes('displayName')||check.displayName===newName)&&(!mask.includes('description')||check.description===newDesc)){item.status='edited';item.name=String(check.displayName??item.name);item.description=String(check.description??item.description);item.after={name:item.name,description:item.description};item.detail='Update confirmed after ambiguous error';log('OK',item.detail,item.id);archiveAfter(item,options.archiveReview);return;}
+    }catch{}
+    item.status='failed';item.detail='Edit failed: '+humanError(e);log('ERROR',item.detail,item.id);
+  }
+}
+async function startBatch(){
+  if(running||loading)return;
+  if(!state.verified){notice('Check your group in Step 1 again.','danger');return;}
+  if(!previewSignature||previewSignature!==makeSignature()){notice('Click Preview changes first.','danger');return;}
+  const options={...state.options},candidates=planCandidates(options);
+  const items=$('testOne').checked?candidates.slice(0,1):candidates;
+  if(!items.length){notice('Nothing left to edit. Preview again.','danger');return;}
+  try{await accessToken();}catch(e){notice('Connect with Roblox before applying changes: '+humanError(e),'danger');return;}
+  if($('confirm').value!==state.groupName){notice('Type the verified group name exactly into the safety check box.','danger');return;}
+  if(!confirm(($('testOne').checked?'TEST ONE ITEM':'APPLY CHANGES')+': '+items.length+' item(s) in '+state.groupName+'.\n\nThis attempts real metadata changes. Continue?'))return;
+  running=true;stop=false;
+  activity.phase='running';activity.startedAt=new Date().toISOString();activity.total=items.length;
+  activity.current=0;activity.currentName='';activity.runIds=items.map(i=>i.id);activity.message='Live edit started. Each item is verified before editing.';
+  publishLiveSoon();render();log('START','LIVE edit of '+items.length+' item(s) in group '+state.groupName);
+  for(const [index,item] of items.entries()){
+    if(stop)break;
+    activity.current=index;activity.currentName=item.name+' (#'+item.id+')';activity.message='Editing item '+(index+1)+' of '+items.length;
+    $('runMessage').textContent=activity.message;publishLiveSoon();
+    await runOne(item,index,options);
+    activity.current=index+1;activity.message='Processed '+(index+1)+' of '+items.length;
+    await save();render();publishLiveSoon();
+    if(index<items.length-1&&!stop)await sleep(options.delay);
+  }
+  running=false;const stopped=stop;stop=false;previewSignature=null;
+  const counts=liveCounts();activity.phase=stopped?'paused':'finished';activity.currentName='';
+  activity.message=stopped?'Batch paused. Review results before continuing.':'Batch finished. Review successes and failures.';
+  activity.lastBatch={...counts,finishedAt:new Date().toISOString(),startedAt:activity.startedAt,total:activity.total,processed:activity.current,paused:stopped,groupId:state.groupId,groupName:state.groupName};
+  publishLiveSoon();$('runMessage').textContent=activity.message;log(stopped?'WARN':'OK',activity.message);render();await save();
+  notice(activity.message,stopped?'':'success');
+}
 
 function exportText(name,content,type='text/csv'){
   const blob=new Blob([content],{type:type+';charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
   a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
+async function updateAuthUi(){
+  const id=await getClientId();
+  $('oauthClientId').value=id;
+  $('oauthRedirect').value=redirectUri();
+  const session=await getSessionInfo();
+  $('oauthConnect').disabled=!id||running;
+  $('oauthDisconnect').disabled=!session||running;
+  $('oauthStatus').textContent=session?'Connected as '+(session.username?'@'+session.username:'Roblox user')+(session.id?' (#'+session.id+')':''):'Not connected. Preview works without sign-in.';
+  $('oauthStatus').className='verification'+(session?' ok':'');
+}
+async function configureOauth(){
+  if(running||loading)return;
+  try{await setClientId($('oauthClientId').value);await updateAuthUi();notice('Roblox OAuth client configured. Click Connect with Roblox to authorize.','success');}
+  catch(e){notice(humanError(e),'danger');}
+}
+async function connectOauth(){
+  $('oauthConnect').disabled=true;$('oauthStatus').textContent='Opening Roblox authorization…';
+  try{await signIn();await updateAuthUi();notice('Connected to Roblox! Test an edit on one item first.','success');}
+  catch(e){await updateAuthUi();notice('Roblox connection could not be completed: '+humanError(e),'danger');}
+}
 function wire(){
+  $('oauthSaveClient').addEventListener('click',configureOauth);
+  $('oauthConnect').addEventListener('click',connectOauth);
+  $('oauthDisconnect').addEventListener('click',async()=>{if(running)return;await signOut();await updateAuthUi();notice('Disconnected from Roblox.','success');});
+  $('oauthCopyRedirect').addEventListener('click',()=>navigator.clipboard.writeText(redirectUri()).then(()=>notice('Redirect URL copied. Register this exact URL in Roblox Creator Hub.','success')).catch(e=>notice(humanError(e),'danger')));
   $('verifyGroup').addEventListener('click',verifyGroup);
   $('renameAll').addEventListener('change',()=>{$('nameMode').value=$('renameAll').checked?'same':'keep';updateOptions();});
   $('nameMode').addEventListener('change',updateOptions);
@@ -399,7 +500,7 @@ function wire(){
     location.reload();
   });
 }
-wire();await restoreTheme();await restore();
+wire();await restoreTheme();await restore();await updateAuthUi();
 // A running batch does not survive closing this tab. Heartbeats let the companion
 // distinguish a working editor from a tab that crashed or was closed.
 setInterval(()=>{if(running||loading)publishLiveSoon();},5000);
