@@ -8,15 +8,25 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.7</span></div>
+  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.7.2</span></div>
   <div class="topright"><span class="muted privacy-label">LOCAL FIRST · NO ANALYTICS</span><button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch color theme">Light mode</button><a href="https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics" target="_blank" rel="noopener">Creator Dashboard ↗</a></div>
 </header>
 <main>
   <section class="hero">
     <div><div class="eyebrow">THE CREATOR WORKSPACE / CLASSIC CLOTHING</div><h1>Make clothing edits<br><em>feel simple.</em></h1>
-      <p>A quieter way to organize classic clothing. Choose clothes, preview descriptions and names, then copy the results into Roblox to save. No keys or setup required.</p></div>
-    <div class="hero-wordmark" aria-hidden="true">CLOTH<br>WORK<span>.</span></div><div class="catMascot" aria-hidden="true"><span class="catFace">🐈</span><span class="catSparkle">✦</span><span class="catHeart">♡</span></div>
+      <p>Plan clothing names and descriptions, preview the results, and save them yourself through Roblox Creator Hub.</p></div>
+<div class="hero-brand" aria-hidden="true">CLOTHWORK</div>
   </section>
+  <details class="quickstart" id="quickstart" open>
+    <summary><span class="quickstart-label">START HERE</span> New to Clothwork? <span class="quickstart-hint">Click to collapse</span></summary>
+    <div class="quickstart-grid">
+      <div><b>1 · Load</b><p>Enter a group ID and load clothing, or add one item with its Roblox URL/ID.</p></div>
+      <div><b>2 · Choose</b><p>Keep existing names, set one name, or rename each item separately. Descriptions are optional.</p></div>
+      <div><b>3 · Preview</b><p>Preview your changes and use Copy name or Copy description on individual items.</p></div>
+      <div><b>4 · Save</b><p>Open the item in Roblox Creator Hub, paste and save it there, then select Mark saved.</p></div>
+    </div>
+    <p class="hint quickstart-note"><strong>Important:</strong> This public edition prepares and tracks changes; it does not automatically edit, put items on sale, or archive clothing. No key or OAuth setup is required. <a href="https://github.com/bordersz/clothwork/blob/main/docs/USER_GUIDE.md" target="_blank" rel="noopener noreferrer">Full installation guide ↗</a></p>
+  </details>
   <div id="notice" class="notice" role="status">Start with a group ID or paste a clothing URL below. Nothing changes on Roblox until you save it there.</div>
   <div class="layout">
     <aside class="sidebar">
@@ -125,7 +135,7 @@
     <p class="hint">On the item's thumbnail in Roblox, click <strong>⋯ → Archive in Marketplace</strong>, then confirm. Clothwork cannot archive items on its own.</p>
   </section>
   <section class="panel logPanel"><div class="panelhead"><div><h2>Progress & activity</h2><p class="hint">Track your work here. Changes only count as saved after you confirm them.</p></div><div class="inline"><button id="clearHistory" class="subtle" type="button">Clear local data</button><button id="exportLog" class="subtle" type="button">Download results</button></div></div><div id="logs" class="logs"><div class="hint">No activity yet.</div></div></section>
-  <footer>Clothwork / v0.7 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
+  <footer>Clothwork / v0.7.2 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
 </main>
 <script type="module" src="app.js"></script>
 </body>
