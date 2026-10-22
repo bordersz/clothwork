@@ -26,7 +26,7 @@
 
 Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants and T-shirts. It verifies a group's identity, loads clothing, previews bulk name and description changes, shows a compact companion inside the Creator Dashboard, and keeps local activity/results.
 
-**Clothwork is a browser-based clothing workspace.** This edition previews planned changes and supports manual editing through Roblox's own interface.
+**What the GitHub download does:** preview, organize, copy, and track changes to classic clothing. **The user saves each item in Roblox Creator Hub.** It does not bulk-edit metadata automatically, turn sales on/off, or archive Marketplace items.
 
 ## Features
 
@@ -40,11 +40,11 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 - Export inventory and reports; clear locally saved data.
 - Review age-eligible items with clear links and instructions for **manual Marketplace archiving** in Roblox.
 - Automatically show the dashboard companion on first visit, with a collapsible floating panel.
-- A subtle cat animation that respects reduced-motion settings.
+- A built-in first-run checklist and optional light/dark interface.
 
-## Installation — free
+## Install and use — free
 
-**Windows:** select the inner folder containing `manifest.json` when using Chrome’s **Load unpacked** folder picker. `manifest.json` is a file, not a folder; `docs` and `tests` should remain alongside it. See [step-by-step installation](docs/USER_GUIDE.md).
+**On Windows:** download the ZIP using GitHub's **Code → Download ZIP**, extract it, and open the extracted folders until you see `app.js` and `manifest.json` next to each other. In `chrome://extensions`, enable **Developer mode → Load unpacked**, then **select that entire folder**. `manifest.json` is a file, not a folder. See the [visual step-by-step explanation](docs/USER_GUIDE.md).
 
 1. Download or clone the repository.
 2. Open `chrome://extensions` in Google Chrome.
@@ -54,7 +54,7 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 6. Enter a group ID and load shirts and pants, or add one clothing item by URL or asset ID. Choose a naming mode and preview your changes.
 7. Use Copy name / Copy description for each item, save through Roblox Creator Hub, and mark the result as saved.
 
-No paid website, external service, OAuth registration, or extension store listing is required. Clothwork prepares edits; each change must be saved through Roblox's own editor.
+No paid website, OAuth registration, API key, or Chrome Web Store listing is required for the manual editing workflow. Clothwork prepares edits; each change must be saved through Roblox's own editor.
 
 ## API access and supported editing
 
@@ -78,7 +78,7 @@ npm test
 
 ## Status
 
-Version **0.7.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
+Version **0.7.2** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
 
 ## Ownership
 
