@@ -62,7 +62,7 @@ export function expand(template, item, group, index=0) {
 export function plan(item, options, group, index=0) {
   const newName=options.nameMode==='same' ? String(options.nameText||'').trim()
     : options.nameMode==='template' ? expand(options.nameText,item,group,index).trim()
-    : options.nameMode==='custom' ? String(item.customName||'').trim() : null;
+    : options.nameMode==='custom' ? (String(item.customName||'').trim()||null) : null;
   const selectedTags=options.editDescription&&options.includeTags?parseClothingTags(options.tagText):{tags:[],invalid:[]};
   const newDescription=options.editDescription
     ? appendClothingTags(formatDescription(expand(options.description,item,group,index)),selectedTags.tags)
@@ -70,7 +70,7 @@ export function plan(item, options, group, index=0) {
   const changeName=newName!==null && newName!==item.name;
   const changeDescription=newDescription!==null && newDescription!==item.description;
   const issues=[];
-  if(options.nameMode!=='keep' && !newName) issues.push('Name is blank');
+  if((options.nameMode==='same'||options.nameMode==='template') && !newName) issues.push('Name is blank');
   if(newName!==null && newName.length>50) issues.push('Name exceeds 50 characters');
   if(options.editDescription&&options.includeTags){
     if(selectedTags.invalid.length)issues.push('Remove unrecognized tags: '+selectedTags.invalid.join(', ').slice(0,180));

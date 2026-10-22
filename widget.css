@@ -86,3 +86,8 @@ footer span { font-size: 10px; color: #737782 }
 .cw-shell[data-theme=light] .cw-primary{background:#20222b;color:#fff;border-color:#20222b}
 .cw-shell[data-theme=light] .cw-settingsbox p,.cw-shell[data-theme=light] .cw-caption,.cw-shell[data-theme=light] .cw-row small{color:#6f7480}
 .cw-shell[data-theme=light] .cw-icon-button{background:#ededf1;color:#25262d}
+
+/* Friendly compact companion. The cat is a native emoji, no external media calls. */
+.cw-cat{display:inline-block;animation:cw-cat-wave 3.5s ease-in-out infinite;transform-origin:bottom center}
+@keyframes cw-cat-wave{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}
+@media(prefers-reduced-motion:reduce){.cw-cat{animation:none}}

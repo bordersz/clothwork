@@ -19,8 +19,8 @@ const $=id=>document.getElementById(id);
 const SETTINGS_KEY='clothwork_v01_state';
 const LIVE_KEY='clothwork_live_v03';
 const CONTROL_KEY='clothwork_control_v03';
-const DEFAULTS={nameMode:'same',nameText:'',editDescription:true,description:'Made by {group}',includeTags:false,tagText:'',archiveReview:false,delay:5000};
-let state={groupId:'',groupName:'',verified:false,items:[],logs:[],options:{...DEFAULTS}};
+const DEFAULTS={nameMode:'keep',nameText:'',editDescription:true,description:'Made by {group}',includeTags:false,tagText:'',archiveReview:false,delay:5000};
+let state={groupId:'',groupName:'',verified:false,manualMode:false,items:[],logs:[],options:{...DEFAULTS}};
 let running=false,stop=false,dirtySave=null,loading=false,previewSignature=null;
 let liveTimer=null;
 let activity={phase:'idle',message:'Open the Clothwork editor to get started.',total:0,current:0,currentName:'',
@@ -74,16 +74,17 @@ async function restore(){
   if(prior?.lastBatch){activity.lastBatch=prior.lastBatch;activity.phase=prior.lastBatch.paused?'paused':'finished';activity.message='Last batch results are available.';activity.current=prior.lastBatch.processed||0;activity.total=prior.lastBatch.total||0;}
 
   if(saved && typeof saved==='object'){
-    state.groupId=String(saved.groupId||'');state.groupName=String(saved.groupName||'');
+    state.groupId=String(saved.groupId||'');state.groupName=String(saved.groupName||'');state.manualMode=!!saved.manualMode;
     state.items=Array.isArray(saved.items)?saved.items:[];state.logs=Array.isArray(saved.logs)?saved.logs:[];
     state.options={...DEFAULTS,...saved.options};
-    // v0.1 default was 'keep'; the easy editor starts with 'same' for blank legacy defaults.
-    if (state.options.nameMode==='keep' && !state.options.nameText) state.options.nameMode='same';
+    // Preserve the user's chosen naming mode.
+    // Keep the existing naming preference without silently enabling bulk renaming.
     // Safety: every new tab must verify group again, independent of saved settings.
     state.verified=false;
   }
   $('groupId').value=state.groupId;
   $('nameMode').value=state.options.nameMode;$('renameAll').checked=state.options.nameMode!=='keep';$('nameText').value=state.options.nameText;
+  for(const radio of document.querySelectorAll('input[name="nameChoice"]'))radio.checked=radio.value===state.options.nameMode;
   $('editDescription').checked=state.options.editDescription;$('description').value=state.options.description;
   $('includeTags').checked=!!state.options.includeTags;renderTagChoices();
   $('archiveReview').checked=state.options.archiveReview;$('delay').value=String(state.options.delay);
@@ -91,7 +92,7 @@ async function restore(){
 }
 async function save(){
   try{
-    const safe={groupId:state.groupId,groupName:state.groupName,items:state.items,logs:state.logs.slice(0,1000),options:state.options};
+    const safe={groupId:state.groupId,groupName:state.groupName,manualMode:state.manualMode,items:state.items,logs:state.logs.slice(0,1000),options:state.options};
     await chrome.storage.local.set({[SETTINGS_KEY]:safe});publishLiveSoon();
   }catch(e){notice('Could not save local progress: '+humanError(e),'danger');}
 }
@@ -122,17 +123,18 @@ function filtered(){
   return state.items.filter(i=>(!search||`${i.id} ${i.name} ${i.type}`.toLowerCase().includes(search)) &&
     (status==='all'||(status==='pending'&&i.status==='pending')|| (status==='failed'&&i.status==='failed') ||
      (status==='skipped'&&i.status==='skipped') ||(status==='edited'&&['edited','already'].includes(i.status))||
-     (status==='archive'&&i.archive==='manual_review')));
+     (status==='archive'&&i.archive==='manual_review')||(status==='archive_ready'&&archiveEligibility(i).eligible&&i.archive!=='manual_done')));
 }
 function compute(i){return plan(i,state.options,state.groupName||'GROUP',state.items.indexOf(i));}
 function render(){
   const all=state.items;
   $('countAll').textContent=all.length.toLocaleString();$('countSelected').textContent=all.filter(x=>x.selected).length.toLocaleString();
   $('countDone').textContent=all.filter(x=>['edited','already'].includes(x.status)).length.toLocaleString();
+  $('archiveEligibleCount').textContent=all.filter(x=>archiveEligibility(x).eligible&&x.archive!=='manual_done').length.toLocaleString()+' items eligible by age';
   $('countIssues').textContent=all.filter(x=>['failed','skipped'].includes(x.status)).length.toLocaleString();
   $('loadAssets').disabled=!state.verified||loading||running;
   $('verifyGroup').disabled=running||loading;
-  $('preview').disabled=running||loading||!state.verified||!all.some(i=>i.selected);
+  $('preview').disabled=running||loading||(!state.verified&&!state.manualMode)||!all.some(i=>i.selected);
   $('pause').disabled=!running&&!loading;
   $('pause').textContent=loading?'Stop loading':'Pause';
   const items=filtered();$('visibleCount').textContent=`Showing ${items.length.toLocaleString()} of ${all.length.toLocaleString()}`;
@@ -147,16 +149,22 @@ function render(){
       check.addEventListener('change',()=>{i.selected=check.checked;invalidatePreview();saveSoon();render();});ch.append(check);tr.append(ch);
       const asset=mk('td');asset.append(mk('div','asset-name',i.name||'(untitled)'),mk('div','mini',`${i.type} · #${i.id}`));if(i.created)asset.append(mk('div','mini',new Date(i.created).toLocaleDateString()));tr.append(asset);
       const planned=mk('td');planned.append(mk('div','mini','Current: '+(i.name||'(no name)')));
-      if(state.options.nameMode!=='keep')planned.append(mk('div','planned','→ '+(p.newName||'(blank)')));
+      if(p.newName!==null)planned.append(mk('div','planned','→ '+(p.newName||'(blank)')));
       else planned.append(mk('div','notchange','Name unchanged'));
       if(p.changeDescription)planned.append(mk('div','mini','Description will change'));
       if(p.issues.length)planned.append(mk('div','detail',p.issues.join('; ')));
       tr.append(planned);
-      const custom=mk('td');const inp=document.createElement('input');inp.className='custom';inp.value=i.customName||'';inp.placeholder='Optional override';
+      const custom=mk('td','advancedColumn');const inp=document.createElement('input');inp.className='custom';inp.value=i.customName||'';inp.placeholder='Leave blank to keep name';inp.maxLength=50;inp.setAttribute('aria-label','New name for '+(i.name||'item '+i.id));
       inp.addEventListener('change',()=>{i.customName=inp.value;invalidatePreview();saveSoon();render();});custom.append(inp);tr.append(custom);
       const status=mk('td');status.append(mk('span','tag '+i.status,(i.status||'pending').replaceAll('_',' ')));
       if(i.detail)status.append(mk('div','detail',i.detail));
-      if(i.archive==='manual_review'){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
+      if(archiveEligibility(i).eligible && i.archive!=='manual_done'){
+        const archiveLink=link('https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics','Archive on Roblox ↗');
+        archiveLink.title='Find this item in Roblox Creator Hub, click its three-dot menu and choose Archive in Marketplace. Clothwork does not archive automatically.';
+        const note=mk('div','mini','Eligible by age · find ⋯ in Roblox');
+        actions.append(document.createElement('div'),archiveLink,note);
+      }
+      if(i.archive!=='manual_done'&&(i.archive==='manual_review'||archiveEligibility(i).eligible)){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
       tr.append(status);
       const actions=mk('td');
       const open=link(`https://create.roblox.com/dashboard/creations/catalog/${encodeURIComponent(i.id)}/configure`,'Open in Roblox ↗');
@@ -172,11 +180,11 @@ function render(){
         if(!confirm('Confirm you saved asset #'+i.id+' on Roblox?'))return;
         i.status='edited';i.detail='Manually saved in Roblox (user confirmed)';
         i.name=String(plannedName||i.name);i.description=String(plannedDesc??i.description);
-        log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
+        archiveAfter(i,state.options.archiveReview);log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
       });
       actions.append(document.createElement('div'),copyName,copyDesc,mark);
       if(i.archive==='manual_review'){
-        const b=mk('button','smallbtn','Mark archived');b.style.marginTop='7px';b.title='Only mark after actually archiving it on Roblox';
+        const b=mk('button','smallbtn',i.archive==='manual_done'?'Archived ✓':'Mark archived');b.style.marginTop='7px';b.title='Only mark after actually archiving it on Roblox';
         b.addEventListener('click',()=>{if(confirm('Did you personally confirm Marketplace archiving for asset '+i.id+' on Roblox?')){i.archive='manual_done';log('OK','Manually marked as Marketplace archived',i.id);saveSoon();render();}});
         actions.append(document.createElement('div'),b);
       }
@@ -204,8 +212,11 @@ function renderTagChoices(){
 function updateRuleInputs(){
   const mode=$('nameMode').value;
   $('renameAll').checked=mode!=='keep';
-  $('nameArea').hidden=mode==='keep';
-  $('nameText').disabled=mode==='keep'||mode==='custom';
+  $('nameArea').hidden=mode!=='same'&&mode!=='template';
+  $('individualHelp').hidden=mode!=='custom';
+  document.body.classList.toggle('individual-names',mode==='custom');
+  for(const radio of document.querySelectorAll('input[name="nameChoice"]'))radio.checked=radio.value===mode;
+  $('nameText').disabled=mode!=='same'&&mode!=='template';
   $('nameText').placeholder=mode==='template'?'Example: {oldName} | {group}':'Example: vintage black jeans';
   $('descriptionArea').hidden=!$('editDescription').checked;
   $('description').disabled=!$('editDescription').checked;
@@ -228,7 +239,7 @@ function invalidatePreview(){
   }
 }
 function makeSignature(){
-  return JSON.stringify({groupId:state.groupId,groupName:state.groupName,verified:state.verified,options:state.options,
+  return JSON.stringify({groupId:state.groupId,groupName:state.groupName,verified:state.verified,manualMode:state.manualMode,options:state.options,
     items:state.items.filter(i=>i.selected).map(i=>[i.id,i.type,i.name,i.description,i.customName])});
 }
 function planCandidates(options=state.options){
@@ -255,20 +266,23 @@ function refreshExample(){
   });
 }
 function refreshPreviewAccess(){
-  const ready=!!previewSignature && previewSignature===makeSignature() && state.verified;
+  const ready=!!previewSignature && previewSignature===makeSignature() && (state.verified||state.manualMode);
   $('liveSection').hidden=!ready;
   $('confirmGroupLabel').textContent='“'+(state.groupName||'your group')+'”';
   const count=planCandidates().length;
-  $('apply').textContent=$('testOne').checked?'Test edit on 1 item':'Apply to '+count.toLocaleString()+' selected items';
+  $('apply').textContent='Go to clothing list · '+count.toLocaleString()+' ready ↓';
   $('apply').disabled=running||loading||!ready||!count;
-  $('preview').disabled=running||loading||!state.verified||!state.items.some(i=>i.selected);
+  $('preview').disabled=running||loading||(!state.verified&&!state.manualMode)||!state.items.some(i=>i.selected);
   $('nameCount').textContent=$('nameText').value.length+' / 50';
   $('descriptionCount').textContent=$('description').value.length+' / 1000';
 }
 function previewBatch(){
   if(running||loading)return;
-  if(!state.verified){notice('Please check the group in Step 1 first.','danger');return;}
+  if(!state.verified&&!state.manualMode){notice('Check a group or add one item using a clothing link or ID.','danger');return;}
   updateOptions();
+  if(!state.verified&&state.options.editDescription&&/\{group\}/i.test(state.options.description)){
+    notice('Replace {group} in your description with the real creator or group name before previewing a manually added item.','danger');return;
+  }
   const selected=state.items.filter(i=>i.selected);
   if(!selected.length){notice('Load and select at least one clothing item first.','danger');return;}
   const {nameMode,editDescription,archiveReview}=state.options;
@@ -335,7 +349,7 @@ async function verifyGroup(){
     if(String(g.id)!==id||!g.name)throw Error('Group lookup returned an unexpected identity');
     state.groupName=g.name;state.verified=true;
     $('groupVerified').className='verification ok';$('groupVerified').textContent=`✓ ${g.name} · Group #${id}`;
-    notice(`Verified “${g.name}” (#${id}). All live edits require matching creator ownership in the Open Cloud response.`,'success');
+    notice(`Group found: “${g.name}” (#${id}). Choose clothing, preview it, and save changes through Roblox.`,'success');
     log('OK','Verified group '+g.name);await save();
   }catch(e){$('groupVerified').className='verification bad';$('groupVerified').textContent=humanError(e);notice('Group verification failed. No changes allowed.','danger');}
   render();
@@ -395,6 +409,9 @@ function exportText(name,content,type='text/csv'){
 function wire(){
   $('verifyGroup').addEventListener('click',verifyGroup);
   $('renameAll').addEventListener('change',()=>{$('nameMode').value=$('renameAll').checked?'same':'keep';updateOptions();});
+  for(const radio of document.querySelectorAll('input[name="nameChoice"]'))radio.addEventListener('change',()=>{if(radio.checked){$('nameMode').value=radio.value;updateOptions();}});
+  $('goToNames').addEventListener('click',()=>document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  $('showArchiveEligible').addEventListener('click',()=>{const eligible=state.items.filter(i=>archiveEligibility(i).eligible&&i.archive!=='manual_done');if(!eligible.length){notice('No loaded items are confirmed old enough for the archiving checklist.','danger');return;}$('statusFilter').value='archive_ready';render();document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth',block:'start'});});
   $('nameMode').addEventListener('change',updateOptions);
   $('creditShortcut').addEventListener('click',()=>{$('description').value='Made by {group}';$('editDescription').checked=true;updateOptions();});
   $('preview').addEventListener('click',previewBatch);
@@ -422,6 +439,31 @@ function wire(){
     invalidatePreview();
     $('statusFilter').value='all';notice(`Selected ${failed.length} failed/skipped items for another attempt. Check group and errors before retry.`);saveSoon();render();
   });
+  $('addItem').addEventListener('click',()=>{
+    const input=$('addItemInput').value.trim();let assetId='';
+    if(/^\d+$/.test(input))assetId=input;
+    else{
+      try{
+        const url=new URL(input);
+        if(!url.protocol.startsWith('http')||!/(^|\.)roblox\.com$/i.test(url.hostname))throw Error('Not a Roblox link');
+        const match=url.pathname.match(/\/(?:catalog|library|assets?|creations)\/(?:catalog\/)?(\d+)(?:\/|$)/i);
+        if(!match)throw Error('No asset ID found in link');
+        assetId=match[1];
+      }catch{notice('Enter a numeric clothing asset ID or a Roblox catalog/configuration URL.','danger');return;}
+    }
+    if(!isId(assetId)){notice('Please enter a valid asset ID.','danger');return;}
+    const existing=state.items.find(x=>x.id===assetId);
+    if(existing){existing.selected=true;notice('This item is already in your list and is selected.','success');}
+    else{
+      const item=normalizeItem({assetId,assetType:$('addItemType').value,name:$('addItemName').value.trim()||'Item #'+assetId});
+      if(!item){notice('Could not prepare the clothing ID.','danger');return;}
+      state.items.push(item);
+      notice('Added item #'+assetId+'. Review its name and description before copying.','success');
+    }
+    state.manualMode=true;
+    $('addItemInput').value='';$('addItemName').value='';
+    invalidatePreview();render();saveSoon();document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth',block:'start'});
+  });
   $('importCsv').addEventListener('click',()=>{$('csvFile').click();});
   $('csvFile').addEventListener('change',async e=>{
     const file=e.target.files?.[0];if(!file)return;
@@ -435,7 +477,7 @@ function wire(){
         imported.push(item);
       }
       if(!imported.length)throw Error('No valid clothing rows. Required: id, type, name; optional: created, customName, ownerId.');
-      invalidatePreview();state.items=dedupeItems([...state.items,...imported]);await save();render();notice(`Imported ${imported.length} rows. Live updates still require independent API ownership verification.`,'success');
+      invalidatePreview();state.items=dedupeItems([...state.items,...imported]);await save();render();notice(`Imported ${imported.length} rows. Review each item and save changes manually in Roblox.`,'success');
     }catch(err){notice('CSV import failed: '+humanError(err),'danger');}finally{e.target.value='';}
   });
   $('exportCsv').addEventListener('click',()=>exportText('clothwork-assets-'+(state.groupId||'group')+'.csv',toCsv(state.items)));
@@ -453,5 +495,3 @@ wire();await restoreTheme();await restore();
 // distinguish a working editor from a tab that crashed or was closed.
 setInterval(()=>{if(running||loading)publishLiveSoon();},5000);
 
-// Never persist the secret credential and clear the field when the workspace closes.
-window.addEventListener('pagehide',()=>{const key=document.getElementById('apiKey');if(key)key.value='';});
