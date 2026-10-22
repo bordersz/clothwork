@@ -171,10 +171,14 @@ function render(){
       actions.append(open);
       const plannedName=p.newName===null?i.name:p.newName;
       const plannedDesc=p.newDescription===null?i.description:p.newDescription;
-      const copyName=mk('button','smallbtn','Copy name');
-      copyName.type='button';copyName.addEventListener('click',()=>copyPrepared(plannedName||'','Name'));
-      const copyDesc=mk('button','smallbtn','Copy description');
-      copyDesc.type='button';copyDesc.addEventListener('click',()=>copyPrepared(plannedDesc||'','Description'));
+      const copyName=mk('button','smallbtn',p.newName===null?'Name unchanged':'Copy name');
+      copyName.type='button';copyName.disabled=p.newName===null;
+      copyName.title=p.newName===null?'Name is not being changed':'Copy your prepared new name';
+      copyName.addEventListener('click',()=>copyPrepared(p.newName||'','Name'));
+      const copyDesc=mk('button','smallbtn',p.newDescription===null?'Description unchanged':'Copy description');
+      copyDesc.type='button';copyDesc.disabled=p.newDescription===null;
+      copyDesc.title=p.newDescription===null?'Description is not being changed':'Copy your prepared description with spacing';
+      copyDesc.addEventListener('click',()=>copyPrepared(p.newDescription||'','Description'));
       const mark=mk('button','smallbtn',i.status==='edited'?'Saved ✓':'Mark saved');
       mark.type='button';mark.addEventListener('click',()=>{
         if(!confirm('Confirm you saved asset #'+i.id+' on Roblox?'))return;
