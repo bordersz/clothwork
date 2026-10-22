@@ -15,6 +15,10 @@ Clothwork is a guided workspace for preparing and organizing Roblox classic clot
 
 The `docs` and `tests` subfolders are normal project files. Leave them where they are. They are not the folder to select when installing.
 
+## No group loading? Add one clothing item instead
+
+Open **Can't load clothing? Add one by link or ID**, paste a Roblox catalog item URL or its numeric asset ID, choose Shirt/Pants/T-shirt, and select **Add to clothing list**. You can prepare names and descriptions without requesting API credentials. Roblox checks permissions when you attempt to save. If a description contains `{group}`, replace it with the actual group name before previewing.
+
 ## Choose your clothing and naming option
 
 1. In the editor, enter the number of a group whose clothing you manage, then select **Check group**.
