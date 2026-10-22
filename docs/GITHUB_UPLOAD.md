@@ -21,7 +21,7 @@ Go to repo **Settings → Pages → Build and deployment**, select **Deploy from
 
 ## Important
 
-- Upload only the **public / read-only** edition to this public GitHub repository.
-- Keep the personal-use edition and its API credential flow off the public repo.
+- Publish only reviewed release files.
+- Keep credentials and local exports out of version control.
 - GitHub commits from the old project still remain in the repo history; no API keys were detected in the previously supplied source files, but audit any additional commits/files you added separately.
 - Do not commit `.ROBLOSECURITY`, Roblox API keys, private activity exports, or secrets.
