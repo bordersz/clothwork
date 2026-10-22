@@ -31,15 +31,20 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 ## Features
 
 - Confirm the target group ID and limit operations to the intended creator.
-- Preview batch names/descriptions, including `{group}` placeholders.
+- Choose **keep names**, **one name for selected items**, or **individual item names**.
+- Prepare and preview descriptions with `{group}` and other supported placeholders.
 - Preserve description paragraphs, preview expandable long text, and optionally add selected clothing tags from a fixed vocabulary.
 - Filter shirts, pants, T-shirts; select items individually or in bulk.
 - Inspect activity and results in a floating in-page panel.
 - Switch between refined **dark and light themes**.
 - Export inventory and reports; clear locally saved data.
-- Prepare an archive review checklist, with age estimates. **Actual Marketplace archiving remains manual.**
+- Review age-eligible items with clear links and instructions for **manual Marketplace archiving** in Roblox.
+- Automatically show the dashboard companion on first visit, with a collapsible floating panel.
+- A subtle cat animation that respects reduced-motion settings.
 
 ## Installation — free
+
+**Windows:** select the inner folder containing `manifest.json` when using Chrome’s **Load unpacked** folder picker. `manifest.json` is a file, not a folder; `docs` and `tests` should remain alongside it. See [step-by-step installation](docs/USER_GUIDE.md).
 
 1. Download or clone the repository.
 2. Open `chrome://extensions` in Google Chrome.
@@ -48,7 +53,11 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 5. Open the [Creator Dashboard](https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics&filterIndex=0). Click the small Clothwork button, then **Open editor**.
 6. Enter the correct group ID and verify it. Load shirts and pants, then preview the changes.
 
-No paid website, external service, or extension store listing is required.
+No paid website, external service, OAuth registration, or extension store listing is required. Clothwork prepares edits; each change must be saved through Roblox's own editor.
+
+## API access and supported editing
+
+This public release does **not** ask creators for API keys or attempt automatic account actions. Roblox's Creator Third-Party App Policy prohibits requesting other users' API keys. An officially registered OAuth integration would be needed for supported multi-user API editing. This release deliberately provides guided manual saves and archive instructions instead.
 
 ## Safety and privacy
 
@@ -68,7 +77,7 @@ npm test
 
 ## Status
 
-Version **0.6.1** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
+Version **0.7.0** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is an independent project, not an official Roblox integration.
 
 ## Ownership
 
