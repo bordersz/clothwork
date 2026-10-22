@@ -41,7 +41,7 @@
         <div class="howRow"><span class="howDot">1</span><span>Load all shirts and pants.</span></div>
         <div class="howRow"><span class="howDot">2</span><span>Type what they should say.</span></div>
         <div class="howRow"><span class="howDot">3</span><span>Preview the planned changes safely.</span></div>
-        <div class="privacyNote">The public edition never changes Roblox clothing. There is no API key field.</div>
+        <div class="privacyNote">Only the explicitly approved edits will be submitted to Roblox, using the account you authorize.</div>
       </section>
     </aside>
     <div class="mainColumn">
@@ -69,7 +69,7 @@
         </details>
       </section>
       <section class="panel actionPanel" aria-labelledby="reviewTitle">
-        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Check your changes</h2><p class="hint">Public preview mode · No live editing or API keys.</p></div></div>
+        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Check your changes</h2><p class="hint">Preview first. Connect with Roblox to save authorized edits.</p></div></div>
         <h3>Connect your Roblox account</h3><div class="oauthCard">
 <div class="fieldTop"><label for="oauthClientId">Clothwork OAuth app client ID (developer setup)</label><a href="https://create.roblox.com/dashboard/credentials" target="_blank" rel="noopener noreferrer">Roblox OAuth apps ↗</a></div>
 <div class="inline"><input id="oauthClientId" inputmode="numeric" placeholder="Registered Roblox OAuth client ID" autocomplete="off"/><button id="oauthSaveClient" type="button" class="subtle">Save ID</button></div>
@@ -80,7 +80,7 @@
 <p class="hint">Tokens remain in temporary extension session storage; no Roblox passwords or API keys are entered into Clothwork. Test one expendable asset first.</p></div><div class="reviewActions"><button id="preview" class="primary bigButton" type="button">Preview changes (safe) →</button><button id="pause" class="subtle" disabled type="button">Pause</button></div>
         <div id="previewSummary" class="previewSummary" aria-live="polite">Your preview will show how many selected items will be renamed or updated.</div>
         <div id="liveSection" class="liveSection" hidden>
-          <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Public portfolio edition: read-only. No API key entry or live editing. Your own local-use edition can be kept private.</p></div></div>
+          <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Sign in with Roblox above, review your changes, and test on one item before a larger batch.</p></div></div>
           <input type="checkbox" id="testOne" checked hidden />
           <span id="confirmGroupLabel" hidden></span><input id="confirm" hidden />
           <button id="apply" type="button" class="block" disabled>Public preview — live edits disabled</button>
