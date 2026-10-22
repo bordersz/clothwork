@@ -34,6 +34,14 @@
         </div>
         <button id="loadAssets" class="primary block" disabled type="button">Load all selected clothing</button>
         <p class="hint underButton">Shirts + pants are selected by default. This loads the full group inventory, not just one page.</p>
+        <details class="miniDetails"><summary>Can't load clothing? Add one by link or ID</summary>
+          <p class="hint">A simple alternative when Roblox's list isn't available. Paste your item's Roblox catalog URL or numeric asset ID.</p>
+          <label for="addItemInput">Clothing link or asset ID</label><input id="addItemInput" placeholder="https://www.roblox.com/catalog/123456/..." />
+          <label for="addItemName">Current item name (optional)</label><input id="addItemName" maxlength="50" placeholder="Example: classic black shirt" />
+          <label for="addItemType">Clothing type</label><select id="addItemType"><option value="Shirt">Shirt</option><option value="Pants">Pants</option><option value="TShirt">T-shirt</option></select>
+          <button id="addItem" class="subtle" type="button">Add to clothing list</button>
+          <p class="hint">Clothwork can't confirm ownership from a pasted link. Only edit items you have permission to manage; Roblox checks access when saving.</p>
+        </details>
         <details class="miniDetails"><summary>Have an inventory CSV instead?</summary><button id="importCsv" class="subtle" type="button">Import CSV</button><input id="csvFile" type="file" accept=".csv,text/csv" hidden /><p class="hint">Only use this if Roblox cannot load your items directly.</p></details>
       </section>
       <section class="panel helpPanel">
