@@ -20,7 +20,7 @@ const SETTINGS_KEY='clothwork_v01_state';
 const LIVE_KEY='clothwork_live_v03';
 const CONTROL_KEY='clothwork_control_v03';
 const DEFAULTS={nameMode:'keep',nameText:'',editDescription:true,description:'Made by {group}',includeTags:false,tagText:'',archiveReview:false,delay:5000};
-let state={groupId:'',groupName:'',verified:false,items:[],logs:[],options:{...DEFAULTS}};
+let state={groupId:'',groupName:'',verified:false,manualMode:false,items:[],logs:[],options:{...DEFAULTS}};
 let running=false,stop=false,dirtySave=null,loading=false,previewSignature=null;
 let liveTimer=null;
 let activity={phase:'idle',message:'Open the Clothwork editor to get started.',total:0,current:0,currentName:'',
@@ -74,7 +74,7 @@ async function restore(){
   if(prior?.lastBatch){activity.lastBatch=prior.lastBatch;activity.phase=prior.lastBatch.paused?'paused':'finished';activity.message='Last batch results are available.';activity.current=prior.lastBatch.processed||0;activity.total=prior.lastBatch.total||0;}
 
   if(saved && typeof saved==='object'){
-    state.groupId=String(saved.groupId||'');state.groupName=String(saved.groupName||'');
+    state.groupId=String(saved.groupId||'');state.groupName=String(saved.groupName||'');state.manualMode=!!saved.manualMode;
     state.items=Array.isArray(saved.items)?saved.items:[];state.logs=Array.isArray(saved.logs)?saved.logs:[];
     state.options={...DEFAULTS,...saved.options};
     // Preserve the user's chosen naming mode.
@@ -92,7 +92,7 @@ async function restore(){
 }
 async function save(){
   try{
-    const safe={groupId:state.groupId,groupName:state.groupName,items:state.items,logs:state.logs.slice(0,1000),options:state.options};
+    const safe={groupId:state.groupId,groupName:state.groupName,manualMode:state.manualMode,items:state.items,logs:state.logs.slice(0,1000),options:state.options};
     await chrome.storage.local.set({[SETTINGS_KEY]:safe});publishLiveSoon();
   }catch(e){notice('Could not save local progress: '+humanError(e),'danger');}
 }
@@ -134,7 +134,7 @@ function render(){
   $('countIssues').textContent=all.filter(x=>['failed','skipped'].includes(x.status)).length.toLocaleString();
   $('loadAssets').disabled=!state.verified||loading||running;
   $('verifyGroup').disabled=running||loading;
-  $('preview').disabled=running||loading||!state.verified||!all.some(i=>i.selected);
+  $('preview').disabled=running||loading||(!state.verified&&!state.manualMode)||!all.some(i=>i.selected);
   $('pause').disabled=!running&&!loading;
   $('pause').textContent=loading?'Stop loading':'Pause';
   const items=filtered();$('visibleCount').textContent=`Showing ${items.length.toLocaleString()} of ${all.length.toLocaleString()}`;
@@ -239,7 +239,7 @@ function invalidatePreview(){
   }
 }
 function makeSignature(){
-  return JSON.stringify({groupId:state.groupId,groupName:state.groupName,verified:state.verified,options:state.options,
+  return JSON.stringify({groupId:state.groupId,groupName:state.groupName,verified:state.verified,manualMode:state.manualMode,options:state.options,
     items:state.items.filter(i=>i.selected).map(i=>[i.id,i.type,i.name,i.description,i.customName])});
 }
 function planCandidates(options=state.options){
@@ -266,20 +266,23 @@ function refreshExample(){
   });
 }
 function refreshPreviewAccess(){
-  const ready=!!previewSignature && previewSignature===makeSignature() && state.verified;
+  const ready=!!previewSignature && previewSignature===makeSignature() && (state.verified||state.manualMode);
   $('liveSection').hidden=!ready;
   $('confirmGroupLabel').textContent='“'+(state.groupName||'your group')+'”';
   const count=planCandidates().length;
   $('apply').textContent='Go to clothing list · '+count.toLocaleString()+' ready ↓';
   $('apply').disabled=running||loading||!ready||!count;
-  $('preview').disabled=running||loading||!state.verified||!state.items.some(i=>i.selected);
+  $('preview').disabled=running||loading||(!state.verified&&!state.manualMode)||!state.items.some(i=>i.selected);
   $('nameCount').textContent=$('nameText').value.length+' / 50';
   $('descriptionCount').textContent=$('description').value.length+' / 1000';
 }
 function previewBatch(){
   if(running||loading)return;
-  if(!state.verified){notice('Please check the group in Step 1 first.','danger');return;}
+  if(!state.verified&&!state.manualMode){notice('Check a group or add one item using a clothing link or ID.','danger');return;}
   updateOptions();
+  if(!state.verified&&state.options.editDescription&&/\{group\}/i.test(state.options.description)){
+    notice('Replace {group} in your description with the real creator or group name before previewing a manually added item.','danger');return;
+  }
   const selected=state.items.filter(i=>i.selected);
   if(!selected.length){notice('Load and select at least one clothing item first.','danger');return;}
   const {nameMode,editDescription,archiveReview}=state.options;
@@ -435,6 +438,31 @@ function wire(){
     for(const i of state.items){i.selected=failed.includes(i);if(failed.includes(i)){i.status='pending';i.detail='';}}
     invalidatePreview();
     $('statusFilter').value='all';notice(`Selected ${failed.length} failed/skipped items for another attempt. Check group and errors before retry.`);saveSoon();render();
+  });
+  $('addItem').addEventListener('click',()=>{
+    const input=$('addItemInput').value.trim();let assetId='';
+    if(/^\d+$/.test(input))assetId=input;
+    else{
+      try{
+        const url=new URL(input);
+        if(!url.protocol.startsWith('http')||!/(^|\.)roblox\.com$/i.test(url.hostname))throw Error('Not a Roblox link');
+        const match=url.pathname.match(/\/(?:catalog|library|assets?|creations)\/(?:catalog\/)?(\d+)(?:\/|$)/i);
+        if(!match)throw Error('No asset ID found in link');
+        assetId=match[1];
+      }catch{notice('Enter a numeric clothing asset ID or a Roblox catalog/configuration URL.','danger');return;}
+    }
+    if(!isId(assetId)){notice('Please enter a valid asset ID.','danger');return;}
+    const existing=state.items.find(x=>x.id===assetId);
+    if(existing){existing.selected=true;notice('This item is already in your list and is selected.','success');}
+    else{
+      const item=normalizeItem({assetId,assetType:$('addItemType').value,name:$('addItemName').value.trim()||'Item #'+assetId});
+      if(!item){notice('Could not prepare the clothing ID.','danger');return;}
+      state.items.push(item);
+      notice('Added item #'+assetId+'. Review its name and description before copying.','success');
+    }
+    state.manualMode=true;
+    $('addItemInput').value='';$('addItemName').value='';
+    invalidatePreview();render();saveSoon();document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth',block:'start'});
   });
   $('importCsv').addEventListener('click',()=>{$('csvFile').click();});
   $('csvFile').addEventListener('change',async e=>{
