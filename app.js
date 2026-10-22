@@ -149,7 +149,7 @@ function render(){
       check.addEventListener('change',()=>{i.selected=check.checked;invalidatePreview();saveSoon();render();});ch.append(check);tr.append(ch);
       const asset=mk('td');asset.append(mk('div','asset-name',i.name||'(untitled)'),mk('div','mini',`${i.type} · #${i.id}`));if(i.created)asset.append(mk('div','mini',new Date(i.created).toLocaleDateString()));tr.append(asset);
       const planned=mk('td');planned.append(mk('div','mini','Current: '+(i.name||'(no name)')));
-      if(state.options.nameMode!=='keep')planned.append(mk('div','planned','→ '+(p.newName||'(blank)')));
+      if(p.newName!==null)planned.append(mk('div','planned','→ '+(p.newName||'(blank)')));
       else planned.append(mk('div','notchange','Name unchanged'));
       if(p.changeDescription)planned.append(mk('div','mini','Description will change'));
       if(p.issues.length)planned.append(mk('div','detail',p.issues.join('; ')));
@@ -180,7 +180,7 @@ function render(){
         if(!confirm('Confirm you saved asset #'+i.id+' on Roblox?'))return;
         i.status='edited';i.detail='Manually saved in Roblox (user confirmed)';
         i.name=String(plannedName||i.name);i.description=String(plannedDesc??i.description);
-        log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
+        archiveAfter(i,state.options.archiveReview);log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
       });
       actions.append(document.createElement('div'),copyName,copyDesc,mark);
       if(i.archive==='manual_review'){
@@ -467,5 +467,3 @@ wire();await restoreTheme();await restore();
 // distinguish a working editor from a tab that crashed or was closed.
 setInterval(()=>{if(running||loading)publishLiveSoon();},5000);
 
-// Never persist the secret credential and clear the field when the workspace closes.
-window.addEventListener('pagehide',()=>{const key=document.getElementById('apiKey');if(key)key.value='';});
