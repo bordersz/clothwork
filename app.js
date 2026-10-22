@@ -112,6 +112,10 @@ function renderLogs(){
 }
 function mk(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=String(text);return el;}
 function link(url,label){const a=mk('a','',label);a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.style.color='#bbb5ff';return a;}
+async function copyPrepared(value,label){
+  try{await navigator.clipboard.writeText(String(value));notice(label+' copied. Paste and save in Roblox Creator Hub.','success');}
+  catch(e){notice('Copy failed. Select text in the preview and copy manually.','danger');}
+}
 function filtered(){
   const search=$('search').value.toLowerCase().trim(),status=$('statusFilter').value;
   return state.items.filter(i=>(!search||`${i.id} ${i.name} ${i.type}`.toLowerCase().includes(search)) &&
@@ -153,7 +157,23 @@ function render(){
       if(i.detail)status.append(mk('div','detail',i.detail));
       if(i.archive==='manual_review'){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
       tr.append(status);
-      const actions=mk('td');actions.append(link(`https://create.roblox.com/dashboard/creations/catalog/${encodeURIComponent(i.id)}/configure`,'Configure ↗'));
+      const actions=mk('td');
+      const open=link(`https://create.roblox.com/dashboard/creations/catalog/${encodeURIComponent(i.id)}/configure`,'Open in Roblox ↗');
+      actions.append(open);
+      const plannedName=p.newName===null?i.name:p.newName;
+      const plannedDesc=p.newDescription===null?i.description:p.newDescription;
+      const copyName=mk('button','smallbtn','Copy name');
+      copyName.type='button';copyName.addEventListener('click',()=>copyPrepared(plannedName||'','Name'));
+      const copyDesc=mk('button','smallbtn','Copy description');
+      copyDesc.type='button';copyDesc.addEventListener('click',()=>copyPrepared(plannedDesc||'','Description'));
+      const mark=mk('button','smallbtn',i.status==='edited'?'Saved ✓':'Mark saved');
+      mark.type='button';mark.addEventListener('click',()=>{
+        if(!confirm('Confirm you saved asset #'+i.id+' on Roblox?'))return;
+        i.status='edited';i.detail='Manually saved in Roblox (user confirmed)';
+        i.name=String(plannedName||i.name);i.description=String(plannedDesc??i.description);
+        log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
+      });
+      actions.append(document.createElement('div'),copyName,copyDesc,mark);
       if(i.archive==='manual_review'){
         const b=mk('button','smallbtn','Mark archived');b.style.marginTop='7px';b.title='Only mark after actually archiving it on Roblox';
         b.addEventListener('click',()=>{if(confirm('Did you personally confirm Marketplace archiving for asset '+i.id+' on Roblox?')){i.archive='manual_done';log('OK','Manually marked as Marketplace archived',i.id);saveSoon();render();}});
@@ -251,7 +271,7 @@ function previewBatch(){
   $('previewSummary').textContent=`✓ Ready to review ${candidates.length.toLocaleString()} item(s): ${shirts} shirts, ${pants} pants${tees?`, ${tees} T-shirts`:''}. Changes: ${changes.join(' + ')}. Nothing has been changed on Roblox.`;
   $('previewSummary').className='previewSummary ok';
   previewSignature=makeSignature();activity.phase='preview';activity.message=`${candidates.length} item(s) ready for preview. No edits made.`;publishLiveSoon();
-  notice('Preview ready! Review the example above, then decide whether to test a real edit.','success');
+  notice('Preview ready! Use the clothing list to copy values and save each item in Roblox.','success');
   log('PREVIEW',`Checked ${candidates.length} selected item(s). No Roblox assets changed.`);
   render();
 }
@@ -342,7 +362,7 @@ function archiveAfter(item,archiveReview){
   const e=archiveEligibility(item);
   log(e.eligible?'REVIEW':'SKIP',e.eligible?'Eligible by age for manual archive review':`Cannot confirm archive eligibility: ${e.reason}`,item.id);
 }
-async function startBatch(){notice('This public preview is read-only. It does not accept API keys or modify Roblox assets.','danger');}
+async function startBatch(){notice('Use Copy name / Copy description in each clothing row, save in Roblox, then select Mark saved.','success');document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth'});}
 
 function exportText(name,content,type='text/csv'){
   const blob=new Blob([content],{type:type+';charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
