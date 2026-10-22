@@ -30,7 +30,7 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 
 ## Features
 
-- Confirm the target group ID and limit operations to the intended creator.
+- Check a group ID and load available clothing, or paste an individual Roblox clothing URL/asset ID without an API key.
 - Choose **keep names**, **one name for selected items**, or **individual item names**.
 - Prepare and preview descriptions with `{group}` and other supported placeholders.
 - Preserve description paragraphs, preview expandable long text, and optionally add selected clothing tags from a fixed vocabulary.
@@ -51,7 +51,8 @@ Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants
 3. Turn **Developer mode** on.
 4. Click **Load unpacked**, then choose the folder that contains `manifest.json`.
 5. Open the [Creator Dashboard](https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics&filterIndex=0). Click the small Clothwork button, then **Open editor**.
-6. Enter the correct group ID and verify it. Load shirts and pants, then preview the changes.
+6. Enter a group ID and load shirts and pants, or add one clothing item by URL or asset ID. Choose a naming mode and preview your changes.
+7. Use Copy name / Copy description for each item, save through Roblox Creator Hub, and mark the result as saved.
 
 No paid website, external service, OAuth registration, or extension store listing is required. Clothwork prepares edits; each change must be saved through Roblox's own editor.
 
