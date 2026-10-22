@@ -22,6 +22,8 @@ const CONTROL_KEY='clothwork_control_v03';
 const DEFAULTS={nameMode:'keep',nameText:'',editDescription:true,description:'Made by {group}',includeTags:false,tagText:'',archiveReview:false,delay:5000};
 let state={groupId:'',groupName:'',verified:false,manualMode:false,items:[],logs:[],options:{...DEFAULTS}};
 let running=false,stop=false,dirtySave=null,loading=false,previewSignature=null;
+const PAGE_SIZE=100;
+let currentPage=0;
 let liveTimer=null;
 let activity={phase:'idle',message:'Open the Clothwork editor to get started.',total:0,current:0,currentName:'',
   runIds:[],lastBatch:null,startedAt:null};
@@ -137,12 +139,19 @@ function render(){
   $('preview').disabled=running||loading||(!state.verified&&!state.manualMode)||!all.some(i=>i.selected);
   $('pause').disabled=!running&&!loading;
   $('pause').textContent=loading?'Stop loading':'Pause';
-  const items=filtered();$('visibleCount').textContent=`Showing ${items.length.toLocaleString()} of ${all.length.toLocaleString()}`;
+  const items=filtered();
+  const pages=Math.max(1,Math.ceil(items.length/PAGE_SIZE));
+  currentPage=Math.min(currentPage,pages-1);
+  const start=currentPage*PAGE_SIZE;
+  $('visibleCount').textContent=`Showing ${items.length?start+1:0}–${Math.min(items.length,start+PAGE_SIZE)} of ${items.length.toLocaleString()} matching (${all.length.toLocaleString()} loaded)`;
+  $('pageInfo').textContent=`Page ${currentPage+1} of ${pages}`;
+  $('previousPage').disabled=currentPage===0;
+  $('nextPage').disabled=currentPage===pages-1;
   $('selectAll').checked=items.length>0&&items.every(x=>x.selected);
   const tbody=$('rows');tbody.replaceChildren();
   if(!items.length){const tr=mk('tr');const td=mk('td','empty','Nothing to show here. Load clothing or change your search.');td.colSpan=6;tr.append(td);tbody.append(tr);}else{
     // Render first 400 rows for responsiveness. Filters and export still operate on full inventory.
-    const listed=items.slice(0,400);
+    const listed=items.slice(start,start+PAGE_SIZE);
     for(const i of listed){
       const p=compute(i),tr=mk('tr');
       const ch=mk('td'),check=document.createElement('input');check.type='checkbox';check.checked=!!i.selected;
@@ -156,7 +165,7 @@ function render(){
       tr.append(planned);
       const custom=mk('td','advancedColumn');const inp=document.createElement('input');inp.className='custom';inp.value=i.customName||'';inp.placeholder='Leave blank to keep name';inp.maxLength=50;inp.setAttribute('aria-label','New name for '+(i.name||'item '+i.id));
       inp.addEventListener('change',()=>{i.customName=inp.value;invalidatePreview();saveSoon();render();});custom.append(inp);tr.append(custom);
-      const status=mk('td');status.append(mk('span','tag '+i.status,(i.status||'pending').replaceAll('_',' ')));
+      const status=mk('td'),actions=mk('td');status.append(mk('span','tag '+i.status,(i.status||'pending').replaceAll('_',' ')));
       if(i.detail)status.append(mk('div','detail',i.detail));
       if(archiveEligibility(i).eligible && i.archive!=='manual_done'){
         const archiveLink=link('https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics','Archive on Roblox ↗');
@@ -166,7 +175,6 @@ function render(){
       }
       if(i.archive!=='manual_done'&&(i.archive==='manual_review'||archiveEligibility(i).eligible)){const e=archiveEligibility(i);status.append(mk('div','detail',`Archive: ${e.reason}`));}
       tr.append(status);
-      const actions=mk('td');
       const open=link(`https://create.roblox.com/dashboard/creations/catalog/${encodeURIComponent(i.id)}/configure`,'Open in Roblox ↗');
       actions.append(open);
       const plannedName=p.newName===null?i.name:p.newName;
@@ -181,7 +189,7 @@ function render(){
       copyDesc.addEventListener('click',()=>copyPrepared(p.newDescription||'','Description'));
       const mark=mk('button','smallbtn',i.status==='edited'?'Saved ✓':'Mark saved');
       mark.type='button';mark.addEventListener('click',()=>{
-        if(!confirm('Confirm you saved asset #'+i.id+' on Roblox?'))return;
+        if(i.status==='edited')return;
         i.status='edited';i.detail='Manually saved in Roblox (user confirmed)';
         i.name=String(plannedName||i.name);i.description=String(plannedDesc??i.description);
         archiveAfter(i,state.options.archiveReview);log('OK','Confirmed saved in Roblox',i.id);saveSoon();render();
@@ -194,7 +202,6 @@ function render(){
       }
       tr.append(actions);tbody.append(tr);
     }
-    if(items.length>400){const tr=mk('tr'),td=mk('td','empty','Displaying the first 400 matches. Narrow your search to access the rest.');td.colSpan=6;tr.append(td);tbody.append(tr);}
   }
   renderLogs();
   refreshExample();
@@ -238,7 +245,7 @@ function updateOptions(){
 function invalidatePreview(){
   if(previewSignature!==null){
     previewSignature=null;
-    $('previewSummary').textContent='Settings or selections changed. Click “Preview changes” again before saving anything.';
+    $('previewSummary').textContent='Selections changed. Select Start editing again to prepare the updated choices.';
     $('previewSummary').className='previewSummary';
   }
 }
@@ -271,7 +278,7 @@ function refreshExample(){
 }
 function refreshPreviewAccess(){
   const ready=!!previewSignature && previewSignature===makeSignature() && (state.verified||state.manualMode);
-  $('liveSection').hidden=!ready;
+  $('liveSection').hidden=true; // A single start action, no extra go step.
   $('confirmGroupLabel').textContent='“'+(state.groupName||'your group')+'”';
   const count=planCandidates().length;
   $('apply').textContent='Go to clothing list · '+count.toLocaleString()+' ready ↓';
@@ -298,7 +305,7 @@ function previewBatch(){
     const first=invalid.slice(0,3).map(x=>`#${x.item.id}: ${x.issues.join(', ')}`).join(' | ');
     $('previewSummary').textContent=`Can't continue yet: ${invalid.length} item(s) have a problem. ${first}`;
     $('previewSummary').className='previewSummary bad';
-    notice('Fix the name or description in Step 2, then preview again.','danger');
+    notice('Fix the name or description in Step 2, then select Start editing.','danger');
     render();return;
   }
   if(!candidates.length){
@@ -313,9 +320,11 @@ function previewBatch(){
   $('previewSummary').textContent=`✓ Ready to review ${candidates.length.toLocaleString()} item(s): ${shirts} shirts, ${pants} pants${tees?`, ${tees} T-shirts`:''}. Changes: ${changes.join(' + ')}. Nothing has been changed on Roblox.`;
   $('previewSummary').className='previewSummary ok';
   previewSignature=makeSignature();activity.phase='preview';activity.message=`${candidates.length} item(s) ready for preview. No edits made.`;publishLiveSoon();
-  notice('Preview ready! Use the clothing list to copy values and save each item in Roblox.','success');
-  log('PREVIEW',`Checked ${candidates.length} selected item(s). No Roblox assets changed.`);
+  notice('Ready. Work through your clothing list and save each change in Roblox.','success');
+  log('READY',`Prepared ${candidates.length} selected item(s). No Roblox assets changed.`);
+  currentPage=0;
   render();
+  document.querySelector('.inventory')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 async function fetchJson(url,opts={},maxAttempts=4){
@@ -388,8 +397,8 @@ async function loadAssets(){
         state.items=dedupeItems([...keep.values()]);render();await save();
         cursor=json.nextPageCursor||json.nextCursor||'';
         if(page%5===0)log('LOAD',`${type}: page ${page}, ${count} total rows retrieved`);
-        if(cursor){await sleep(700);} // respectful listing pace
-      }while(cursor&&page<1000&&!stop);
+        if(cursor){await sleep(1000);} // steady pacing between Roblox inventory pages
+      }while(cursor&&!stop);
       if(cursor){partial++;log('WARN',`${type}: stopped at page ${page}. Loading is partial; export the inventory and try again.`);}
       else log('OK',`${type}: completed ${page} page(s)`);
     }catch(e){partial++;log('ERROR',`${type} inventory stopped at page ${page}: ${humanError(e)}`);}
@@ -430,7 +439,10 @@ function wire(){
   });
   $('loadAssets').addEventListener('click',loadAssets);
   for(const name of ['nameText','editDescription','description','archiveReview','delay']) $(name).addEventListener('input',updateOptions);
-  $('search').addEventListener('input',render);$('statusFilter').addEventListener('change',render);
+  $('search').addEventListener('input',()=>{currentPage=0;render();});
+   $('statusFilter').addEventListener('change',()=>{currentPage=0;render();});
+   $('previousPage').addEventListener('click',()=>{currentPage=Math.max(0,currentPage-1);render();document.querySelector('.inventory')?.scrollIntoView({block:'start'});});
+   $('nextPage').addEventListener('click',()=>{currentPage++;render();document.querySelector('.inventory')?.scrollIntoView({block:'start'});});
   $('selectAll').addEventListener('change',e=>{for(const item of filtered())item.selected=e.target.checked;invalidatePreview();saveSoon();render();});
   $('selectVisible').addEventListener('click',()=>{for(const i of filtered())i.selected=true;invalidatePreview();saveSoon();render();});
   $('deselectAll').addEventListener('click',()=>{for(const i of state.items)i.selected=false;invalidatePreview();saveSoon();render();});
