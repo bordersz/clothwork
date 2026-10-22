@@ -71,3 +71,8 @@ html[data-theme=light] .textButton{color:#534e98}
 html[data-theme=light] .miniDetails summary,html[data-theme=light] .advanced summary{color:#615880}
 html[data-theme=light] .privacyNote,html[data-theme=light] .verification{color:#515966}
 html[data-theme=light] .statnum{color:#16171e}html[data-theme=light] .mini{color:#5f6978}
+
+/* Description editor and preview keep paragraph spacing. */
+#description{min-height:180px;line-height:1.6;white-space:pre-wrap;tab-size:4}
+.descriptionHelp{margin:8px 0 0;font-size:11px}
+.sampleLine .descriptionPreview{white-space:pre-wrap;overflow-wrap:anywhere;display:block;max-height:340px;overflow-y:auto;font-weight:500;line-height:1.6;tab-size:4}
