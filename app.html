@@ -81,9 +81,9 @@
         <div id="previewSummary" class="previewSummary" aria-live="polite">Your preview will show how many selected items will be renamed or updated.</div>
         <div id="liveSection" class="liveSection" hidden>
           <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Sign in with Roblox above, review your changes, and test on one item before a larger batch.</p></div></div>
-          <input type="checkbox" id="testOne" checked hidden />
-          <span id="confirmGroupLabel" hidden></span><input id="confirm" hidden />
-          <button id="apply" type="button" class="block" disabled>Public preview — live edits disabled</button>
+          <label class="switchLine testLine"><input type="checkbox" id="testOne" checked /><span><strong>Test on just one item first</strong></span></label>
+          <label for="confirm">Safety check: type <strong id="confirmGroupLabel">your group name</strong></label><input id="confirm" placeholder="Type group name exactly" autocomplete="off" />
+          <button id="apply" type="button" class="primary block" disabled>Test edit on 1 item</button>
         </div>
         <div id="runMessage" class="runMessage" aria-live="polite"></div>
       </section>
