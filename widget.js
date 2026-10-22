@@ -57,7 +57,7 @@
       <section id="cw-settings" class="cw-view" hidden>
         <h3>Public edition / privacy</h3>
         <div class="cw-settingsbox"><b>Read-only portfolio preview</b><p>This edition has no API key field and cannot update clothing. No credentials are collected.</p>
-        <span id="cw-key-info">No key saved by Clothwork</span></div>
+        <span id="cw-key-info">No credentials in sidebar</span></div>
         <a id="cw-api-link" class="cw-secondary cw-link" href="${API_URL}" target="_blank" rel="noopener noreferrer">Manage Roblox API keys ↗</a>
         <a class="cw-mutedlink" href="https://create.roblox.com/docs/cloud/auth/api-keys" target="_blank" rel="noopener noreferrer">API key setup instructions ↗</a>
         <h3>Appearance</h3><button id="cw-theme" class="cw-secondary">Switch to light mode</button>
