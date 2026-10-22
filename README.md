@@ -26,7 +26,7 @@
 
 Clothwork is a Chrome extension that helps organize classic Roblox shirts, pants and T-shirts. It verifies a group's identity, loads clothing, previews bulk name and description changes, shows a compact companion inside the Creator Dashboard, and keeps local activity/results.
 
-**This repository contains the public read-only portfolio edition.** It does not request Roblox API keys or perform live edits.
+**Version 0.5.0 is an OAuth beta:** the public source now includes live metadata editing with Roblox authorization. The project owner must register a Roblox OAuth app before sign-in works. No user's API key is collected.
 
 ## Features
 
@@ -52,13 +52,13 @@ Type or paste text in **New description for every item** and press Enter to make
 5. Open the [Creator Dashboard](https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics&filterIndex=0). Click the small Clothwork button, then **Open editor**.
 6. Enter the correct group ID and verify it. Load shirts and pants, then preview the changes.
 
-No paid website, external service, or extension store listing is required.
+No paid website or extension store listing is required for manual ZIP installation. **Live edits require a registered Roblox OAuth application** (see the setup guide).
 
 ## Safety and privacy
 
 The public build stores relevant inventory and operation state locally in Chrome for resuming and reports; it has no analytics, trackers or developer-operated servers. **Never commit Roblox API keys or cookies.** Review the [privacy policy](docs/PRIVACY.md), [architecture](docs/ARCHITECTURE.md), and [security notes](SECURITY.md).
 
-Roblox's [third-party app policy](https://en.help.roblox.com/hc/en-us/articles/37924211313044-Creator-Third-Party-App-Policy) forbids requesting API keys from other users. The public version intentionally omits credential collection. A future multi-user product requires platform-approved authorization and independent testing.
+Roblox's [third-party app policy](https://en.help.roblox.com/hc/en-us/articles/37924211313044-Creator-Third-Party-App-Policy) forbids requesting API keys from other users. The shared edition uses Roblox OAuth (Authorization Code + PKCE), which needs an app created and configured by the project owner. See [OAuth registration and sharing](docs/OAUTH_SETUP.md). Live edits are experimental and not yet verified against a real Roblox account.
 
 ## Development
 
@@ -70,7 +70,7 @@ npm test
 
 ## Status
 
-Version **0.4.1** — experimental. The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is a portfolio project, not an official Roblox integration.
+Version **0.5.0** — OAuth beta, 13+ local tests passed.  The interface and unit tests are locally testable. Roblox APIs and permissions may change; live operation with a real Roblox session is not certified by this repository. This is a portfolio project, not an official Roblox integration.
 
 ## Ownership
 
