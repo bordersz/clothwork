@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.4</span></div>
+  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.6</span></div>
   <div class="topright"><span class="muted privacy-label">LOCAL FIRST · NO ANALYTICS</span><button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch color theme">Light mode</button><a href="https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics" target="_blank" rel="noopener">Creator Dashboard ↗</a></div>
 </header>
 <main>
@@ -41,7 +41,7 @@
         <div class="howRow"><span class="howDot">1</span><span>Load all shirts and pants.</span></div>
         <div class="howRow"><span class="howDot">2</span><span>Type what they should say.</span></div>
         <div class="howRow"><span class="howDot">3</span><span>Preview the planned changes safely.</span></div>
-        <div class="privacyNote">The public edition never changes Roblox clothing. There is no API key field.</div>
+        <div class="privacyNote">Preview changes, copy prepared values, and save through Roblox Creator Hub.</div>
       </section>
     </aside>
     <div class="mainColumn">
@@ -68,14 +68,14 @@
         </details>
       </section>
       <section class="panel actionPanel" aria-labelledby="reviewTitle">
-        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Check your changes</h2><p class="hint">Public preview mode · No live editing or API keys.</p></div></div>
+        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Check your changes</h2><p class="hint">Review, copy and save through Roblox Creator Hub.</p></div></div>
         <div class="reviewActions"><button id="preview" class="primary bigButton" type="button">Preview changes (safe) →</button><button id="pause" class="subtle" disabled type="button">Pause</button></div>
         <div id="previewSummary" class="previewSummary" aria-live="polite">Your preview will show how many selected items will be renamed or updated.</div>
         <div id="liveSection" class="liveSection" hidden>
-          <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Public portfolio edition: read-only. No API key entry or live editing. Your own local-use edition can be kept private.</p></div></div>
+          <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Save your prepared changes in Roblox, then mark each completed item.</p></div></div>
           <input type="checkbox" id="testOne" checked hidden />
           <span id="confirmGroupLabel" hidden></span><input id="confirm" hidden />
-          <button id="apply" type="button" class="block" disabled>Public preview — live edits disabled</button>
+          <button id="apply" type="button" class="block" disabled>Copy and save in Roblox</button>
         </div>
         <div id="runMessage" class="runMessage" aria-live="polite"></div>
       </section>
@@ -95,7 +95,7 @@
     <div class="tablefoot"><span id="visibleCount" class="hint">0 items</span><span class="hint">Each live edit checks the group's ownership again.</span></div>
   </section>
   <section class="panel logPanel"><div class="panelhead"><div><h2>Problems and activity</h2><p class="hint">If something fails, it gets recorded here. Other items can keep going.</p></div><div class="inline"><button id="clearHistory" class="subtle" type="button">Clear local data</button><button id="exportLog" class="subtle" type="button">Download results</button></div></div><div id="logs" class="logs"><div class="hint">No activity yet.</div></div></section>
-  <footer>Clothwork / v0.4 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
+  <footer>Clothwork / v0.6 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
 </main>
 <script type="module" src="app.js"></script>
 </body>
