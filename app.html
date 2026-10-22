@@ -8,7 +8,7 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.7.2</span></div>
+  <div class="brand"><span class="wordmark">clothwork<span class="wordmark-dot">.</span></span><span class="pill">v0.7.3</span></div>
   <div class="topright"><span class="muted privacy-label">LOCAL FIRST · NO ANALYTICS</span><button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch color theme">Light mode</button><a href="https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics" target="_blank" rel="noopener">Creator Dashboard ↗</a></div>
 </header>
 <main>
@@ -17,12 +17,12 @@
       <p>Plan clothing names and descriptions, preview the results, and save them yourself through Roblox Creator Hub.</p></div>
 <div class="hero-brand" aria-hidden="true">CLOTHWORK</div>
   </section>
-  <details class="quickstart" id="quickstart" open>
-    <summary><span class="quickstart-label">START HERE</span> New to Clothwork? <span class="quickstart-hint">Click to collapse</span></summary>
+  <details class="quickstart" id="quickstart">
+    <summary><span class="quickstart-label">HELP</span> Quick start guide <span class="quickstart-hint">Expand if needed</span></summary>
     <div class="quickstart-grid">
       <div><b>1 · Load</b><p>Enter a group ID and load clothing, or add one item with its Roblox URL/ID.</p></div>
       <div><b>2 · Choose</b><p>Keep existing names, set one name, or rename each item separately. Descriptions are optional.</p></div>
-      <div><b>3 · Preview</b><p>Preview your changes and use Copy name or Copy description on individual items.</p></div>
+      <div><b>3 · Start</b><p>Select Start editing to check your choices and open the clothing list.</p></div>
       <div><b>4 · Save</b><p>Open the item in Roblox Creator Hub, paste and save it there, then select Mark saved.</p></div>
     </div>
     <p class="hint quickstart-note"><strong>Important:</strong> This public edition prepares and tracks changes; it does not automatically edit, put items on sale, or archive clothing. No key or OAuth setup is required. <a href="https://github.com/bordersz/clothwork/blob/main/docs/USER_GUIDE.md" target="_blank" rel="noopener noreferrer">Full installation guide ↗</a></p>
@@ -58,7 +58,7 @@
         <h3>How it works</h3>
         <div class="howRow"><span class="howDot">1</span><span>Load all shirts and pants.</span></div>
         <div class="howRow"><span class="howDot">2</span><span>Type what they should say.</span></div>
-        <div class="howRow"><span class="howDot">3</span><span>Preview the planned changes safely.</span></div>
+        <div class="howRow"><span class="howDot">3</span><span>Select Start editing to work through the list.</span></div>
         <div class="privacyNote">Preview changes, copy prepared values, and save through Roblox Creator Hub.</div>
       </section>
     </aside>
@@ -92,7 +92,7 @@
             <div class="inputFoot"><span>Tags are separated from your description by an empty line.</span><span id="tagCount">0 selected</span></div>
           </div>
         </div>
-        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">EXAMPLE OF YOUR CHANGES</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><div class="catalogDescription"><div id="sampleDesc" class="descriptionBody">Made by your group</div><button id="sampleReadMore" type="button" class="readMoreButton" hidden>Read more</button></div></div></div>
+        <div class="samplePreview" id="samplePreview"><div class="sampleEyebrow">LIVE EXAMPLE · BEFORE / AFTER</div><div class="sampleLine"><span>Before</span><strong id="sampleOld">Load your clothing to see an example</strong></div><div class="sampleLine"><span>After</span><strong id="sampleNew">Your new name will appear here</strong></div><div class="sampleLine"><span>Description</span><div class="catalogDescription"><div id="sampleDesc" class="descriptionBody">Made by your group</div><button id="sampleReadMore" type="button" class="readMoreButton" hidden>Read more</button></div></div></div>
         <details class="advanced" id="advancedRules"><summary>More options <span class="summaryHint">Archive checklist and advanced settings</span></summary>
           <div class="advancedBody"><label for="nameMode" hidden>How to choose names</label><select id="nameMode" hidden><option value="same">Same name for every selected item</option><option value="keep">Don't change names</option><option value="template">Advanced name pattern</option><option value="custom">Use each item's custom name from the list</option></select>
             <p class="hint" hidden>Patterns can use <code>{group}</code>, <code>{oldName}</code>, <code>{id}</code>, <code>{type}</code>, <code>{index}</code>. Only choose this if you want different names.</p>
@@ -102,9 +102,9 @@
         </details>
       </section>
       <section class="panel actionPanel" aria-labelledby="reviewTitle">
-        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Preview, then save in Roblox</h2><p class="hint">Review, copy and save through Roblox Creator Hub.</p></div></div>
-        <div class="reviewActions"><button id="preview" class="primary bigButton" type="button">Preview changes (safe) →</button><button id="pause" class="subtle" disabled type="button">Pause</button></div>
-        <div id="previewSummary" class="previewSummary" aria-live="polite">Your preview will show which items have prepared name or description changes.</div>
+        <div class="panelhead"><div><h2 id="reviewTitle"><span class="step">3</span> Start editing</h2><p class="hint">Check your selections and open the clothing list in one click.</p></div></div>
+        <div class="reviewActions"><button id="preview" class="primary bigButton" type="button">Start editing →</button><button id="pause" class="subtle" disabled type="button">Pause</button></div>
+        <div id="previewSummary" class="previewSummary" aria-live="polite">Your changes are checked when you start. Nothing is sent to Roblox.</div>
         <div id="liveSection" class="liveSection" hidden>
           <div class="liveHeader"><span class="readyIcon">✓</span><div><strong>Preview ready</strong><p>Save your prepared changes in Roblox, then mark each completed item.</p></div></div>
           <input type="checkbox" id="testOne" checked hidden />
@@ -123,10 +123,10 @@
   </section>
   <section class="panel inventory">
     <div class="panelhead"><div><h2>Your clothing <span class="lightHeader">(choose what to update)</span></h2><p class="hint">Use Copy to copy your prepared text. Open the item in Roblox, paste and save it, then click Mark saved.</p></div>
-      <div class="inline right"><button id="selectVisible" class="subtle" type="button">Select filtered</button><button id="deselectAll" class="subtle" type="button">Deselect all</button><button id="exportCsv" class="subtle" type="button">Save clothing list</button></div></div>
+      <div class="inline right"><button id="selectVisible" class="subtle" type="button">Select all matching</button><button id="deselectAll" class="subtle" type="button">Deselect all</button></div></div>
     <div class="toolbar"><input id="search" placeholder="Find a clothing name or ID…" aria-label="Search clothing"/><select id="statusFilter" aria-label="Filter items by status"><option value="all">All items</option><option value="pending">Not edited</option><option value="edited">Finished</option><option value="failed">Failed</option><option value="skipped">Skipped</option><option value="archive">Needs archive review</option><option value="archive_ready">Eligible to archive (by age)</option></select><button id="resetFailures" class="subtle" type="button">Select failed items to retry</button></div>
     <div class="tablewrap"><table><thead><tr><th><input id="selectAll" type="checkbox" title="Select all filtered" aria-label="Select all filtered" /></th><th>Item</th><th>What will happen?</th><th class="advancedColumn">New name (optional)</th><th>Result</th><th>Open</th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">No clothing loaded yet. Check your group and click “Load all selected clothing.”</td></tr></tbody></table></div>
-    <div class="tablefoot"><span id="visibleCount" class="hint">0 items</span><span class="hint">Clothwork never saves to Roblox automatically.</span></div>
+    <div class="tablefoot"><span id="visibleCount" class="hint">0 items</span><div class="inline"><button id="previousPage" class="subtle" type="button" disabled>← Previous</button><span id="pageInfo" class="hint">Page 1 of 1</span><button id="nextPage" class="subtle" type="button" disabled>Next →</button></div></div>
   </section>
   <section class="panel archivePanel" id="archiveHelp">
     <div class="panelhead"><div><h2>Archive clothing</h2><p class="hint">Review eligible assets and open the official Roblox archiving menu. Archiving is completed manually in Roblox.</p></div><span class="tag">REVIEW ONLY</span></div>
@@ -134,8 +134,8 @@
     <div class="inline"><button id="showArchiveEligible" type="button" class="subtle">Show eligible items ↓</button><a class="simpleLink" href="https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics" target="_blank" rel="noopener noreferrer">Open Roblox creations ↗</a></div>
     <p class="hint">On the item's thumbnail in Roblox, click <strong>⋯ → Archive in Marketplace</strong>, then confirm. Clothwork cannot archive items on its own.</p>
   </section>
-  <section class="panel logPanel"><div class="panelhead"><div><h2>Progress & activity</h2><p class="hint">Track your work here. Changes only count as saved after you confirm them.</p></div><div class="inline"><button id="clearHistory" class="subtle" type="button">Clear local data</button><button id="exportLog" class="subtle" type="button">Download results</button></div></div><div id="logs" class="logs"><div class="hint">No activity yet.</div></div></section>
-  <footer>Clothwork / v0.7.2 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
+  <section class="panel logPanel"><div class="panelhead"><div><h2>Progress & activity</h2><p class="hint">Track your work here. Changes only count as saved after you confirm them.</p></div><div class="inline"><details class="miniDetails"><summary>Export (optional)</summary><div class="inline"><button id="exportCsv" class="subtle" type="button">Export clothing CSV</button><button id="exportLog" class="subtle" type="button">Export results JSON</button></div></details><button id="clearHistory" class="subtle" type="button">Clear local data</button></div></div><div id="logs" class="logs"><div class="hint">No activity yet.</div></div></section>
+  <footer>Clothwork / v0.7.3 · Unofficial independent project · Local-first · Marketplace archival remains manual · <a href="https://create.roblox.com/docs/cloud/guides/usage-assets" target="_blank" rel="noopener">Roblox documentation ↗</a></footer>
 </main>
 <script type="module" src="app.js"></script>
 </body>
