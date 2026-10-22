@@ -11,7 +11,7 @@
   const DATA_KEY = 'clothwork_v01_state';
   const PANEL_KEY = 'clothwork_widget_open_v03';
   const CONTROL_KEY = 'clothwork_control_v03';
-  const API_URL = 'https://create.roblox.com/dashboard/credentials?activeTab=ApiKeysTab';
+  const CREATIONS_URL = 'https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics';
   const root = document.createElement('div');
   root.id = 'clothwork-companion-root';
   const shadow = root.attachShadow({ mode: 'closed' });
@@ -30,7 +30,7 @@
     </button>
     <aside id="cw-panel" class="cw-panel" hidden aria-label="Clothwork activity panel">
       <header class="cw-header"><div class="cw-brand"><img src="${chrome.runtime.getURL('icon48.png')}" alt="" />
-        <span><b>clothwork<span class="cw-brand-dot">.</span></b><small>Creator companion</small></span></div>
+        <span><b>clothwork<span class="cw-brand-dot">.</span></b><small>your clothing helper · <span class="cw-cat">🐈 ✧</span></small></span></div>
         <button id="cw-close" class="cw-icon-button" aria-label="Close Clothwork">×</button></header>
       <nav class="cw-tabs" aria-label="Clothwork sections">
         <button class="cw-tab is-active" data-tab="activity">Activity</button>
@@ -38,11 +38,11 @@
         <button class="cw-tab" data-tab="settings">Settings</button>
       </nav>
       <section id="cw-activity" class="cw-view">
-        <div class="cw-statusline"><span id="cw-status" class="cw-status">Not running</span>
+        <div class="cw-statusline"><span id="cw-status" class="cw-status">Ready</span>
           <span id="cw-updated" class="cw-faint"></span></div>
         <div class="cw-group"><span>Configured group</span><strong id="cw-group">Not selected</strong></div>
-        <div id="cw-current" class="cw-current"><small>CURRENT ITEM</small><strong id="cw-item">No active edits</strong>
-          <span id="cw-stage">Start a batch in Clothwork to see its progress here.</span></div>
+        <div id="cw-current" class="cw-current"><small>WORKSPACE</small><strong id="cw-item">Ready to start</strong>
+          <span id="cw-stage">Open Clothwork to plan names and descriptions, then save in Roblox.</span></div>
         <div class="cw-progress-label"><b id="cw-progress">0 / 0</b><span id="cw-pct">0%</span></div>
         <div class="cw-meter"><div id="cw-bar"></div></div>
         <div class="cw-stats"><div><strong id="cw-done">0</strong><small>Completed</small></div><div><strong id="cw-failed">0</strong><small>Failed</small></div><div><strong id="cw-skipped">0</strong><small>Skipped</small></div></div>
@@ -50,16 +50,16 @@
         <button id="cw-pause" class="cw-secondary" hidden>Pause after current item</button>
       </section>
       <section id="cw-results" class="cw-view" hidden>
-        <h3>Last batch</h3><div id="cw-result-summary" class="cw-result-summary">No completed batch yet.</div>
+        <h3>Saved progress</h3><div id="cw-result-summary" class="cw-result-summary">No completed batch yet.</div>
         <h3>Completed / failed items</h3><div id="cw-result-items" class="cw-result-items"><p class="cw-empty">Your finished items will appear here.</p></div>
         <p class="cw-caption">View asset links or open the full dashboard for CSV and JSON reports.</p>
       </section>
       <section id="cw-settings" class="cw-view" hidden>
         <h3>Public edition / privacy</h3>
-        <div class="cw-settingsbox"><b>Guided clothing workspace</b><p>Prepare your changes in Clothwork and save through Roblox Creator Hub.</p>
+        <div class="cw-settingsbox"><b>No keys or accounts to connect</b><p>Prepare your changes in Clothwork and save through Roblox Creator Hub.</p>
         <span id="cw-key-info">No key saved by Clothwork</span></div>
-        <a id="cw-api-link" class="cw-secondary cw-link" href="${API_URL}" target="_blank" rel="noopener noreferrer">Open Roblox Creator Hub ↗</a>
-        <a class="cw-mutedlink" href="https://create.roblox.com/docs/cloud/auth/api-keys" target="_blank" rel="noopener noreferrer">Clothwork guide ↗</a>
+        <a id="cw-api-link" class="cw-secondary cw-link" href="${CREATIONS_URL}" target="_blank" rel="noopener noreferrer">Open Roblox Creator Hub ↗</a>
+        <a class="cw-mutedlink" href="https://github.com/bordersz/clothwork/blob/main/docs/USER_GUIDE.md" target="_blank" rel="noopener noreferrer">How to use Clothwork ↗</a>
         <h3>Appearance</h3><button id="cw-theme" class="cw-secondary">Switch to light mode</button>
         <h3>Your privacy</h3><p class="cw-caption">No analytics, accounts, or tracking. Clothing and activity are retained locally for resume and reports until you clear them in the editor. Credentials are not collected.</p>
         <h3>About this sidebar</h3><p class="cw-caption">Clothwork shows progress from the local editor. It does not click or type inside Roblox's pages. Group ownership is checked by the editor before each live change.</p>
@@ -143,8 +143,8 @@
     const stale = live.phase === 'running' && age > 15000;
     const phase = stale ? 'interrupted' : (live.phase || 'idle');
     const statusLabels = {
-      idle: 'Not running', loading: 'Loading inventory', preview: 'Preview ready',
-      running: 'Editing clothing', finished: 'Finished', paused: 'Paused', interrupted: 'Editor disconnected'
+      idle: 'Ready', loading: 'Loading clothing', preview: 'Preview ready',
+      running: 'Working', finished: 'Finished', paused: 'Paused', interrupted: 'Editor disconnected'
     };
     const status = statusLabels[phase] || 'Ready';
     setText('cw-status', status);
@@ -152,15 +152,15 @@
     $('cw-dot').className = 'cw-dot cw-phase-' + phase;
     setText('cw-updated', live.updatedAt ? new Date(live.updatedAt).toLocaleTimeString() : '');
     setText('cw-group', live.groupName || saved.groupName || 'Not selected');
-    setText('cw-item', live.currentName || (phase === 'finished' ? 'All items processed' : 'No active edits'));
-    setText('cw-stage', stale ? 'Open the editor to check whether the batch stopped.' : (live.message || 'Start a batch in the Clothwork editor.'));
+    setText('cw-item', live.currentName || (phase === 'finished' ? 'Review your saved items' : 'Choose items in the editor'));
+    setText('cw-stage', stale ? 'Open the editor to review the latest information.' : (live.message || 'Open the editor to prepare your next item.'));
     const current = Number(live.current || 0);
     const total = Number(live.total || 0);
     setText('cw-progress', `${current} / ${total}`);
     const percent = total > 0 ? Math.min(100, Math.round(current / total * 100)) : 0;
     $('cw-bar').style.width = `${percent}%`;
     setText('cw-pct', `${percent}%`);
-    setText('cw-done', live.done ?? 0);
+    setText('cw-done', (Array.isArray(saved.items)?saved.items:[]).filter(x=>x.status==='edited'||x.status==='already').length);
     setText('cw-failed', live.failed ?? 0);
     setText('cw-skipped', live.skipped ?? 0);
     $('cw-pause').hidden = phase !== 'running' && phase !== 'loading';
@@ -176,7 +176,7 @@
     // Show failures first, then successfully edited items; all individual results remain in the editor.
     eligible.sort((a, b) => Number(['failed','skipped'].includes(b.status)) - Number(['failed','skipped'].includes(a.status)));
     drawList('cw-result-items', eligible.slice(0, 35), 'No individual results saved yet.');
-    setText('cw-key-info', 'No API credentials requested or stored.');
+    setText('cw-key-info', 'Your clothing workspace works without an API key.');
   }
   async function refresh() {
     try {
@@ -207,7 +207,8 @@
     if (changes[THEME_KEY]) applyWidgetTheme(changes[THEME_KEY].newValue);
   });
   chrome.storage.local.get(PANEL_KEY).then(data => {
-    opened = Boolean(data[PANEL_KEY]);
+    // Open for new users; remember explicit close/open choices after that.
+    opened = data[PANEL_KEY] === undefined ? true : Boolean(data[PANEL_KEY]);
     $('cw-panel').hidden = !opened;
     $('cw-toggle').setAttribute('aria-expanded', String(opened));
   }).catch(() => {});
