@@ -1,8 +1,8 @@
 # Getting started with Clothwork
 
-Clothwork is a guided workspace for preparing and organizing Roblox classic clothing. **You do not need an API key, OAuth registration, or any additional software.** Roblox saves the edits when you use its own Save button.
+Clothwork is a guided workspace for preparing and organizing Roblox classic clothing. **This public edition does not require an API key or additional software.** Roblox saves the edits when you use its own Save button.
 
-## Install on Windows (first time)
+## Install on Windows (first time)\n\n**The key detail:** Chrome asks you to choose a **folder**, not the `manifest.json` file itself.
 
 1. On the Clothwork GitHub repository, select **Code → Download ZIP**.
 2. In Downloads, right-click the ZIP and select **Extract All**.
@@ -13,7 +13,7 @@ Clothwork is a guided workspace for preparing and organizing Roblox classic clot
 7. Select **Load unpacked**. In the folder picker, choose the **folder containing `manifest.json`**, then click **Select Folder**.
 8. Go to [Roblox Creator Hub](https://create.roblox.com/dashboard/creations?activeTab=AvatarItems-classics) and refresh that tab. The Clothwork panel will open the first time; use its **Open Clothwork editor** button.
 
-The `docs` and `tests` subfolders are normal project files. Leave them where they are. They are not the folder to select when installing.
+Example folder layout:\n\n```text\nclothwork-main/      ← choose this whole folder in Chrome\n  manifest.json      ← leave this file inside the folder\n  app.html\n  app.js\n  core.js\n  docs/\n  tests/\n```\n\nThe `docs` and `tests` subfolders are normal project files. Do not select them individually. If Chrome says `manifest.json` is missing, go one folder deeper or select the folder containing it.
 
 ## No group loading? Add one clothing item instead
 
@@ -66,3 +66,4 @@ Roblox generally requires an avatar item to be uploaded at least **180 days** ea
 ## Styling and accessibility
 
 The workspace includes a subtle animated cat and a light/dark theme. Animations stop when reduced-motion preferences are enabled. No Tenor image, remote tracking pixel, or externally hosted script is downloaded.
+\n## What this public build can and cannot do\n\nIt can load clothing when Roblox's browser inventory interface allows it; you can also paste a single clothing ID or URL. It can plan and copy new names/descriptions and track manual completion. It **cannot** automatically save edits, toggle a Marketplace item's On Sale status, or archive it. Each action must be completed and verified in Roblox Creator Hub.\n\nThe **START HERE** panel in the editor summarizes the first four steps. You can collapse it once familiar with the process.\n
