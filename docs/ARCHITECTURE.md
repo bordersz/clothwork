@@ -12,8 +12,8 @@
 
 `Group ID -> verify group -> list classic items -> choose scope -> preview -> manual approval -> results`.
 
-The public edition stops at preview. It is intentionally **read-only**.
-The personal edition adds API-key-authenticated, per-item ownership-verified metadata editing, conservative delays, backoff, follow-up verification, and local error checkpoints. Marketplace archiving is **not automated** in either edition.
+The public edition stops at preview. It provides a safe preview before manual editing.
+All metadata updates are completed manually in Roblox Creator Hub.
 
 ## Trust boundary
 
