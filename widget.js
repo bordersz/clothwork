@@ -160,6 +160,10 @@
     const percent = total > 0 ? Math.min(100, Math.round(current / total * 100)) : 0;
     $('cw-bar').style.width = `${percent}%`;
     setText('cw-pct', `${percent}%`);
+    const progressLabel=shadow.querySelector('.cw-progress-label');
+    const meter=shadow.querySelector('.cw-meter');
+    if(progressLabel)progressLabel.hidden=total===0;
+    if(meter)meter.hidden=total===0;
     setText('cw-done', (Array.isArray(saved.items)?saved.items:[]).filter(x=>x.status==='edited'||x.status==='already').length);
     setText('cw-failed', live.failed ?? 0);
     setText('cw-skipped', live.skipped ?? 0);
